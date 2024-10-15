@@ -2,11 +2,11 @@
 ## Guideline for git
 
    1. Форкаем данный репозиторий (В github)
-   2. Клонируем данный репозиторий на ваш ПК (git clone https://github.com/TevenixLevelUps/Frontend)
+   2. Клонируем данный репозиторий на ваш ПК (git clone https://github.com/TevenixLevelUps/Backend)
    2. Жестко чет пишем
    3. Добавляем изменения в staging (git add .)
    4. Фиксируем прибыль (изменения) (git commit -m "Some title for commit.")
-   5. Отправляем изменения в удаленный репозиторий (git push -u https://github.com/TevenixLevelUps/Frontend)
+   5. Отправляем изменения в удаленный репозиторий (git push -u https://github.com/TevenixLevelUps/Backend)
    6. Создаем PR в вашем удаленном github репозитории. Укажите ФИО и ссылку на ТГ.
    Будут вопросы - обращайтесь в группу левелапов дабы избежать повторяющихся вопросов. Стесняетесь - @timoxgagarin
 
