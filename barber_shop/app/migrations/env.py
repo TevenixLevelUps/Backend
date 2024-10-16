@@ -9,6 +9,7 @@ from alembic import context
 
 from app.database import DATABASE_URL, Base
 from app.services.models import Services # noqa
+from app.services.service_images.models import ServiceImages # noqa
 
 sys.path.insert(0, dirname(dirname(dirname(abspath(__file__)))))
 
