@@ -8,6 +8,7 @@ from sqlalchemy import pool
 from alembic import context
 
 from app.database import DATABASE_URL, Base
+from app.services.models import Services # noqa
 
 sys.path.insert(0, dirname(dirname(dirname(abspath(__file__)))))
 
