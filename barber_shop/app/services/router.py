@@ -1,7 +1,6 @@
-from typing import Annotated
 from uuid import uuid4
 
-from fastapi import APIRouter, status, UploadFile, File, Depends
+from fastapi import APIRouter, status, Depends
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.database import session_getter
