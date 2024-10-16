@@ -1,0 +1,17 @@
+[tool.poetry]
+name = "barbershop"
+version = "0.1.0"
+description = "Level up task"
+authors = ["Yauheni Mukhin <evgen2email@gmail.com>"]
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "^3.12"
+fastapi = "^0.115.2"
+uvicorn = {extras = ["standart"], version = "^0.32.0"}
+pydantic-settings = "^2.5.2"
+
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
