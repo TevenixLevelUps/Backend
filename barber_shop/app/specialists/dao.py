@@ -1,3 +1,4 @@
+from sqlalchemy import delete
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.dao.base import BaseDAO
@@ -30,3 +31,16 @@ class SpecialistsDAO(BaseDAO):
         specialist = await cls.find_one_or_none(session, name=specialist_name)
         if specialist:
             raise SpecialistAlreadyExistsException
+
+    @classmethod
+    async def delete_specialist(
+            cls,
+            session: AsyncSession,
+            specialist_name: str
+    ) -> None:
+        specialist = await cls.find_specialist_by_name(session, specialist_name)
+        delete_specialist_stmt = (
+            delete(cls.model)
+            .where(cls.model.id == specialist.id)
+        )
+        await session.execute(delete_specialist_stmt)

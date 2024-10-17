@@ -42,3 +42,12 @@ async def post_specialist(
     )
     await session.commit()
     return {"message": "specialist added successfully"}
+
+
+@router.delete("/{specialist_name}/", status_code=status.HTTP_204_NO_CONTENT)
+async def delete_specialist(
+        specialist_name: str,
+        session: AsyncSession = Depends(session_getter),
+) -> None:
+    await SpecialistsDAO.delete_specialist(session, specialist_name)
+    await session.commit()
