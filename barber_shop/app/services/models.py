@@ -15,3 +15,4 @@ class Services(Base):
     description: Mapped[str] = mapped_column(nullable=True)
     price: Mapped[Decimal] = mapped_column(nullable=False)
     lead_time: Mapped[time] = mapped_column(nullable=False)
+    image_id: Mapped[UUID] = mapped_column(nullable=True)
