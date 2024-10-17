@@ -16,4 +16,5 @@ async def get_specialist(
         session: AsyncSession = Depends(session_getter),
 ):
     specialist = await SpecialistsDAO.find_specialist_by_name(session, specialist_name)
+    await session.commit()
     return specialist
