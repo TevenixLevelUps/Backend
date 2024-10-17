@@ -36,7 +36,7 @@ async def get_service(
     return service
 
 
-@router.delete("/", status_code=status.HTTP_204_NO_CONTENT)
+@router.delete("/{service_title}", status_code=status.HTTP_204_NO_CONTENT)
 async def delete_service(
         service_title: ServiceTitle,
         session: AsyncSession = Depends(session_getter),
