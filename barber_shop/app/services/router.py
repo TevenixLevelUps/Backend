@@ -14,7 +14,7 @@ router = APIRouter(
 
 
 @router.post("/", status_code=status.HTTP_201_CREATED)
-async def create_service(
+async def post_service(
         service: SServiceCreate,
         session: AsyncSession = Depends(session_getter),
 ) -> dict[str, str]:
