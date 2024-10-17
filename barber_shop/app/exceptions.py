@@ -37,3 +37,8 @@ class ServiceAlreadyExistsException(BarberShopException):
 class NoSuchSpecialistException(BarberShopException):
     status_code = status.HTTP_404_NOT_FOUND
     detail = "There is no such specialist"
+
+
+class SpecialistAlreadyExistsException(BarberShopException):
+    status_code = status.HTTP_409_CONFLICT
+    detail = "This specialist already exists"
