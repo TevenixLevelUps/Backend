@@ -43,3 +43,13 @@ async def delete_service(
 ) -> None:
     await ServicesDAO.delete_service(session, service_title)
     await session.commit()
+
+
+@router.put("/")
+async def put_service(
+        new_service: SServiceCreate,
+        session: AsyncSession = Depends(session_getter),
+) -> dict[str, str]:
+    await ServicesDAO.update_service(session, new_service)
+    await session.commit()
+    return {"message": "service updated successfully"}

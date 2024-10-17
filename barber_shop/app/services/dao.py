@@ -6,7 +6,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from app.dao.base import BaseDAO
 from app.exceptions import NoSuchServiceException
 from app.services.models import Services
-from app.services.schemas import SServiceGet, ServiceTitle
+from app.services.schemas import SServiceGet, ServiceTitle, SServiceCreate
 
 
 class ServicesDAO(BaseDAO):
@@ -52,3 +52,15 @@ class ServicesDAO(BaseDAO):
         await ServiceImagesDAO.delete_service_image(session, service_title)
         await session.execute(delete_service_stmt)
 
+    @classmethod
+    async def update_service(
+            cls,
+            session: AsyncSession,
+            new_service: SServiceCreate,
+    ) -> None:
+        update_service_stmt = (
+            update(cls.model)
+            .where(cls.model.title == new_service.title)
+            .values(**new_service.dict())
+        )
+        await session.execute(update_service_stmt)
