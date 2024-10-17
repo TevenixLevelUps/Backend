@@ -7,7 +7,6 @@ from app.dao.base import BaseDAO
 from app.exceptions import NoSuchServiceException
 from app.services.models import Services
 from app.services.schemas import SServiceGet, ServiceTitle
-from app.services.service_images.dao import ServiceImagesDAO
 
 
 class ServicesDAO(BaseDAO):
@@ -44,6 +43,8 @@ class ServicesDAO(BaseDAO):
             session: AsyncSession,
             service_title: ServiceTitle
     ) -> None:
+        from app.services.service_images.dao import ServiceImagesDAO
+
         delete_service_stmt = (
             delete(cls.model)
             .where(cls.model.title == service_title)
