@@ -42,3 +42,13 @@ class NoSuchSpecialistException(BarberShopException):
 class SpecialistAlreadyExistsException(BarberShopException):
     status_code = status.HTTP_409_CONFLICT
     detail = "This specialist already exists"
+
+
+class NoSuchSpecialistAvatarException(BarberShopException):
+    status_code = status.HTTP_404_NOT_FOUND
+    detail = "There is no such specialist avatar"
+
+
+class AvatarForThisSpecialistAlreadyExistsException(BarberShopException):
+    status_code = status.HTTP_409_CONFLICT
+    detail = "This specialist already has an avatar"
