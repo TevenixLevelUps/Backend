@@ -37,6 +37,12 @@ async def get_service(
     return service
 
 
+@router.get("/", response_model=list[SServiceCreate])
+async def get_services(session: AsyncSession = Depends(session_getter)):
+    services = await ServicesDAO.find_all(session)
+    return services
+
+
 @router.delete("/{service_title}/", status_code=status.HTTP_204_NO_CONTENT)
 async def delete_service(
         service_title: ServiceTitle,
