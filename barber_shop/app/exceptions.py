@@ -29,6 +29,11 @@ class ImageForThisServiceAlreadyExistsException(BarberShopException):
     detail = "This service already has a picture"
 
 
+class ServiceAlreadyExistsException(BarberShopException):
+    status_code = status.HTTP_409_CONFLICT
+    detail = "This service already exists"
+
+
 class NoSuchSpecialistException(BarberShopException):
     status_code = status.HTTP_404_NOT_FOUND
     detail = "There is no such specialist"

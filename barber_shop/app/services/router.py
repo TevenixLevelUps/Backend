@@ -18,6 +18,7 @@ async def post_service(
         service: SServiceCreate,
         session: AsyncSession = Depends(session_getter),
 ) -> dict[str, str]:
+    await ServicesDAO.check_service_not_exist(session, service.title)
     await ServicesDAO.add(
         session,
         id=uuid4(),

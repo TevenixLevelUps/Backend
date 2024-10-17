@@ -4,7 +4,7 @@ from sqlalchemy import update, delete
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.dao.base import BaseDAO
-from app.exceptions import NoSuchServiceException
+from app.exceptions import NoSuchServiceException, ServiceAlreadyExistsException
 from app.services.models import Services
 from app.services.schemas import SServiceGet, ServiceTitle, SServiceCreate
 
@@ -22,6 +22,16 @@ class ServicesDAO(BaseDAO):
         if not service:
             raise NoSuchServiceException
         return service
+
+    @classmethod
+    async def check_service_not_exist(
+            cls,
+            session: AsyncSession,
+            service_title: ServiceTitle,
+    ) -> None:
+        service = await cls.find_one_or_none(session, title=service_title)
+        if service:
+            raise ServiceAlreadyExistsException
 
     @classmethod
     async def update_image_id(
