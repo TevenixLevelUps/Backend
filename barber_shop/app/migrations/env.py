@@ -12,6 +12,7 @@ from app.services.models import Services # noqa
 from app.services.service_images.models import ServiceImages # noqa
 from app.specialists.models import Specialists # noqa
 from app.specialists.avatars.models import SpecialistAvatars # noqa
+from app.orders.models import Orders # noqa
 
 sys.path.insert(0, dirname(dirname(dirname(abspath(__file__)))))
 
