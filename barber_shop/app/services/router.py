@@ -34,3 +34,12 @@ async def get_service(
 ):
     service = await ServicesDAO.find_service_by_title(session, service_title)
     return service
+
+
+@router.delete("/", status_code=status.HTTP_204_NO_CONTENT)
+async def delete_service(
+        service_title: ServiceTitle,
+        session: AsyncSession = Depends(session_getter),
+) -> None:
+    await ServicesDAO.delete_service(session, service_title)
+    await session.commit()

@@ -1,6 +1,7 @@
 from uuid import UUID, uuid4
 
 from fastapi import UploadFile
+from sqlalchemy import delete
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.dao.base import BaseDAO
@@ -57,3 +58,12 @@ class ServiceImagesDAO(BaseDAO):
             image=image_content,
         )
         await ServicesDAO.update_image_id(session, image_id, service.id)
+
+    @classmethod
+    async def delete_service_image(cls, session: AsyncSession, service_title: ServiceTitle) -> None:
+        service = await ServicesDAO.find_service_by_title(session, service_title)
+        delete_service_image_stmt = (
+            delete(cls.model)
+            .where(cls.model.service_id == service.id)
+        )
+        await session.execute(delete_service_image_stmt)
