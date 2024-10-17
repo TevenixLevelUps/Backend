@@ -27,7 +27,7 @@ async def post_service(
     return {"message": "service added successfully"}
 
 
-@router.get("/", response_model=SServiceCreate)
+@router.get("/{service_title}/", response_model=SServiceCreate)
 async def get_service(
         service_title: ServiceTitle,
         session: AsyncSession = Depends(session_getter),
