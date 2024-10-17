@@ -16,7 +16,7 @@ class ServicesDAO(BaseDAO):
     async def find_service_by_title(
             cls,
             session: AsyncSession,
-            service_title: str,
+            service_title: ServiceTitle,
     ) -> SServiceGet:
         service = await cls.find_one_or_none(session, title=service_title)
         if not service:
