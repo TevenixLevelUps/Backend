@@ -1,4 +1,6 @@
-from sqlalchemy import delete
+from uuid import UUID
+
+from sqlalchemy import delete, update
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.dao.base import BaseDAO
@@ -38,9 +40,26 @@ class SpecialistsDAO(BaseDAO):
             session: AsyncSession,
             specialist_name: str
     ) -> None:
+        from app.specialists.avatars.dao import SpecialistAvatarsDAO
+
         specialist = await cls.find_specialist_by_name(session, specialist_name)
         delete_specialist_stmt = (
             delete(cls.model)
             .where(cls.model.id == specialist.id)
         )
+        await SpecialistAvatarsDAO.delete_specialist_avatar(session, specialist_name)
         await session.execute(delete_specialist_stmt)
+
+    @classmethod
+    async def update_avatar_id(
+            cls,
+            session: AsyncSession,
+            avatar_id: UUID,
+            specialist_id: UUID,
+    ) -> None:
+        update_specialist_stmt = (
+            update(cls.model)
+            .where(cls.model.id == specialist_id)
+            .values(avatar_id=avatar_id)
+        )
+        await session.execute(update_specialist_stmt)
