@@ -32,7 +32,7 @@ class ServiceImagesDAO(BaseDAO):
             session: AsyncSession,
             service_id: UUID,
     ) -> None:
-        service_image = await ServiceImagesDAO.find_one_or_none(session, service_id=service_id)
+        service_image = await cls.find_one_or_none(session, service_id=service_id)
         if service_image:
             raise ImageForThisServiceAlreadyExistsException
 
