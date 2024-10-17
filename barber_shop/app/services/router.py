@@ -5,7 +5,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.database import session_getter
 from app.services.dao import ServicesDAO
-from app.services.schemas import SServiceCreate
+from app.services.schemas import SServiceCreate, ServiceTitle
 
 router = APIRouter(
     prefix="/services",
@@ -27,3 +27,10 @@ async def post_service(
     return {"message": "service added successfully"}
 
 
+@router.get("/", response_model=SServiceCreate)
+async def get_service(
+        service_title: ServiceTitle,
+        session: AsyncSession = Depends(session_getter),
+):
+    service = await ServicesDAO.find_service_by_title(session, service_title)
+    return service
