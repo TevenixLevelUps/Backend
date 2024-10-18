@@ -67,3 +67,8 @@ class WrongTimeException(BarberShopException):
 class NoSuchOrderException(BarberShopException):
     status_code = status.HTTP_404_NOT_FOUND
     detail = "There is no such order"
+
+
+class RateLimitException(BarberShopException):
+    status_code = status.HTTP_429_TOO_MANY_REQUESTS
+    detail = "Rate limit exceeded"
