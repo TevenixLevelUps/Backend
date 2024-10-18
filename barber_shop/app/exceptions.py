@@ -52,3 +52,13 @@ class NoSuchSpecialistAvatarException(BarberShopException):
 class AvatarForThisSpecialistAlreadyExistsException(BarberShopException):
     status_code = status.HTTP_409_CONFLICT
     detail = "This specialist already has an avatar"
+
+
+class SpecialistBusyException(BarberShopException):
+    status_code = status.HTTP_403_FORBIDDEN
+    detail = "Specialist is busy at the time"
+
+
+class WrongTimeException(BarberShopException):
+    status_code = status.HTTP_400_BAD_REQUEST
+    detail = "Incorrect time format, example: 2024-10-18T15:38:45"
