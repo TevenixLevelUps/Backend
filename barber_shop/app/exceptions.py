@@ -72,3 +72,8 @@ class NoSuchOrderException(BarberShopException):
 class RateLimitException(BarberShopException):
     status_code = status.HTTP_429_TOO_MANY_REQUESTS
     detail = "Rate limit exceeded"
+
+
+class SecretException(BarberShopException):
+    status_code = status.HTTP_418_IM_A_TEAPOT
+    detail = "Secret exception found"

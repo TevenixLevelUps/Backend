@@ -4,7 +4,7 @@ from fastapi import FastAPI, Request
 from starlette.middleware.base import BaseHTTPMiddleware
 
 from app.config import settings
-from app.exceptions import RateLimitException
+from app.exceptions import RateLimitException, SecretException
 from app.services.router import router as services_router
 from app.services.service_images.router import router as service_images_router
 from app.specialists.router import router as specialists_router
@@ -28,6 +28,10 @@ if __name__ == "__main__":
         reload=True,
     )
 
+
+@app.get("/secret")
+async def get_secret_endpoint():
+    raise SecretException
 
 origins = [
     "*",
