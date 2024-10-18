@@ -62,3 +62,8 @@ class SpecialistBusyException(BarberShopException):
 class WrongTimeException(BarberShopException):
     status_code = status.HTTP_400_BAD_REQUEST
     detail = "Incorrect time format, example: 2024-10-18T15:38:45"
+
+
+class NoSuchOrderException(BarberShopException):
+    status_code = status.HTTP_404_NOT_FOUND
+    detail = "There is no such order"
