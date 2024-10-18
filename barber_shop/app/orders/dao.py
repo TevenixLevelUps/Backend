@@ -1,10 +1,11 @@
 from datetime import datetime, time, timedelta
 from uuid import uuid4, UUID
 
+from sqlalchemy import delete
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.dao.base import BaseDAO
-from app.exceptions import SpecialistBusyException
+from app.exceptions import SpecialistBusyException, NoSuchOrderException
 from app.orders.models import Orders
 from app.orders.schemas import SOrderCreate
 from app.services.dao import ServicesDAO
@@ -59,3 +60,28 @@ class OrdersDAO(BaseDAO):
             order_time=order.order_time,
         )
         await cls.check_order_time(session, order.order_time, service.lead_time, specialist.id)
+
+    @classmethod
+    async def delete_order(
+            cls,
+            session: AsyncSession,
+            order_to_delete: SOrderCreate,
+    ) -> None:
+        specialist = await SpecialistsDAO.find_specialist_by_name(session, order_to_delete.specialist_name)
+        service = await ServicesDAO.find_service_by_title(session, order_to_delete.service_title)
+
+        order_to_delete_from_db = await cls.find_one_or_none(
+            session,
+            customer_name=order_to_delete.customer_name,
+            service_id=service.id,
+            specialist_id=specialist.id,
+            order_time=order_to_delete.order_time,
+        )
+        if not order_to_delete_from_db:
+            raise NoSuchOrderException
+
+        delete_order_stmt = (
+            delete(cls.model)
+            .where(cls.model.id == order_to_delete_from_db.id)
+        )
+        await session.execute(delete_order_stmt)
