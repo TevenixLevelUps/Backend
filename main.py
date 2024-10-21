@@ -1,20 +1,26 @@
 from fastapi import FastAPI
+from fastapi.middleware.cors import CORSMiddleware
 from barbeshop.middleware import SimpleLogging
 
 from barbeshop.api.experts import expert_router
 from barbeshop.api.orders import order_router
 from barbeshop.api.services import service_router
 
-from barbeshop.database import *
-
 app = FastAPI()
+
+origins = [
+    "http://localhost",
+    "Http://localhost:8000"
+]
+
+app.add_middleware(CORSMiddleware,
+                   allow_origins=origins,
+                   allow_credentials=True,
+                   allow_methods=["GET", "POST", "PATCH", "DELETE"],
+                   allow_headers=["*"])
 
 app.add_middleware(SimpleLogging)
 
-app.include_router(expert_router, prefix="/experts")
-app.include_router(order_router, prefix="/orders")
-app.include_router(service_router, prefix="/services")
-
-@app.get("/")
-async def hello():
-    return {"Hello": "world"}
+app.include_router(expert_router)
+app.include_router(order_router)
+app.include_router(service_router)
