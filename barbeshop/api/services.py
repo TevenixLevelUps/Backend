@@ -1,52 +1,55 @@
-from barbeshop.addition.functions import gener_id_from_list
-from barbeshop.database import list_services
 from fastapi import APIRouter, HTTPException
-from fastapi.encoders import jsonable_encoder
-from barbeshop.schemas.services import Service
+from barbeshop.db.db_connect import session
+from barbeshop.schemas.services import CreateService, UpdateService, ReadService
+from barbeshop.db.models.model_services import Service, DeletedService
 
 service_router = APIRouter()
 
-@service_router.post("/")
-async def create_service(service: Service):
-    id = gener_id_from_list(list_services)
-    service.id = id
-    list_services[id] = service
+@service_router.post("/services/")
+async def create_service(service: CreateService):
+    deleted_service = session.query(DeletedService).first()
+    id = lambda deleted_id: deleted_id if deleted_id else None
+    session.add(Service(id=id(deleted_service.id), name=service.name, describe=service.describe, price=service.price, time=service.time))
+    if id(deleted_service.id):
+        session.delete(deleted_service)
+    session.commit()
     return service
 
-@service_router.get("/")
+@service_router.get("/services/")
 async def read_services():
+    services = session.query(Service).all()
+    if not services:
+        raise  HTTPException(status_code=400, detail="Dont have any.")
+    list_services = []
+    for service in services: 
+        list_services.append(ReadService(id=service.id, name=service.name, describe=service.describe, price=service.price, time=service.time))
     return list_services
+    
 
-@service_router.get("/{service_id}")
+@service_router.get("/services/{service_id}")
 async def read_service(service_id: int):
-    try:
-        return list_services[service_id]
-    except Exception:
+    service = session.query(Service).get(service_id)
+    if not service:
         raise HTTPException(status_code=400, detail="Service not found.")
-
-@service_router.patch("/{service_id}")
-async def update_service(service_id: int, update_service: Service):
-    try:
-        old_service_data = list_services[service_id]
-        old_service_model = Service(id=old_service_data.id, 
-                                    name=old_service_data.name, 
-                                    describe=old_service_data.describe, 
-                                    price=old_service_data.price, 
-                                    time=old_service_data.time)
-        update_data = update_service.model_dump(exclude_unset=True)
-        print(update_data)
-        updated_service = old_service_model.model_copy(update=update_data)
-        print(updated_service)
-        updated_service.id = old_service_data.id
-        list_services[service_id] = jsonable_encoder(updated_service)
-        return updated_service
-    except Exception:
+    return ReadService(id=service.id, name=service.name, describe=service.describe, price=service.price, time=service.time)
+    
+@service_router.patch("/services/{service_id}")
+async def update_service(service_id: int, update_service: UpdateService):
+    old_service = session.query(Service).get(service_id)
+    if not old_service:
         raise HTTPException(status_code=400, detail="Service not found.")
+    for attr, value in update_service.model_dump().items():
+        if value:
+            setattr(old_service, attr, value)
+    session.commit()
+    return old_service
 
-@service_router.delete("/{service_id}")
-async def del_service(service_id: int):
-    try:
-        del list_services[service_id]
-        return list_services
-    except Exception:
+@service_router.delete("/services/{service_id}")
+async def del_service(service_id: int):   
+    removable_service = session.query(Service).get(service_id)
+    if not removable_service:
         raise HTTPException(status_code=400, detail="Service not found.") 
+    session.add(DeletedService(id=service_id))
+    session.delete(removable_service)
+    session.commit()
+    return "Service was sucessfully deleted."

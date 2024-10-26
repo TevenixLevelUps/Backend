@@ -1,21 +1,13 @@
-from typing import List
-import random
+from datetime import datetime, timedelta
+    
+def time_plus_time(first_time: str, last_time: str):
+    time_format = "%H:%M"
+    time1 = datetime.strptime(first_time, time_format)
+    time2 = datetime.strptime(last_time, time_format)
 
-def gener_id_from_list(some_list: List):
-    flag = False
-    id = int(random.uniform(0,100))
-    for k,v in some_list.items():
-        if k == id:
-            flag = True
-            
-    if flag:
-        return gener_id_from_list(some_list)
-    else:
-        return id
-
-def read_dict_in_list(some_list: List, return_value: str, value: int | str):
-    for object in some_list:
-            for k,v in object.items():
-                if k == return_value:
-                    if v == value:
-                        return object
+    delta1 = timedelta(hours=time1.hour, minutes=time1.minute)
+    delta2 = timedelta(hours=time2.hour, minutes=time2.minute)
+    result_delta = delta1 + delta2
+    hours, remainder = divmod(result_delta.seconds, 3600)
+    minutes = remainder // 60
+    return f"{hours:02}:{minutes:02}"

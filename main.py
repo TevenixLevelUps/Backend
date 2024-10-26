@@ -1,17 +1,13 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from barbeshop.middleware import SimpleLogging
+from barbeshop.config import origins
 
 from barbeshop.api.experts import expert_router
 from barbeshop.api.orders import order_router
 from barbeshop.api.services import service_router
 
-app = FastAPI()
-
-origins = [
-    "http://localhost",
-    "Http://localhost:8000"
-]
+app = FastAPI(docs_url="/")
 
 app.add_middleware(CORSMiddleware,
                    allow_origins=origins,
