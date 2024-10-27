@@ -10,7 +10,7 @@ from .shema import CreateSpecialist, UpdateSpecialist, SpecialistRespon
 router = APIRouter(tags=["specialist"])
 
 
-@router.get("/specialists/", response_model=list[SpecialistRespon])
+@router.get("/specialists", response_model=list[SpecialistRespon])
 async def get_all_specialists(session: AsyncSession = Depends(db_helper.scoped_session_dependency)):
     return await service.get_all_specialists(session=session)
 
