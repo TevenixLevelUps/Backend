@@ -1,4 +1,4 @@
-from pydantic import BaseModel
+from pydantic import BaseModel,ConfigDict
 from typing import Optional, Any
 
 class BaseSpecialist(BaseModel):
@@ -15,9 +15,7 @@ class UpdateSpecialist(CreateSpecialist):
 class Specialist(CreateSpecialist):
     avatar_base64: Optional[Any]
     id: int
-
-    class Config:
-        orm_mode = True
+    model_config = ConfigDict(from_attributes=True)
 
 
 class SpecialistRespon(BaseSpecialist):
