@@ -3,7 +3,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from starlette import status
 
 from database.db_helper import db_helper
-from . import crud
+from . import service
 from .dependencies import get_specialist_by_id
 from .shema import CreateSpecialist, UpdateSpecialist, SpecialistRespon
 
@@ -12,7 +12,7 @@ router = APIRouter(tags=["specialist"])
 
 @router.get("/specialists/", response_model=list[SpecialistRespon])
 async def get_all_specialists(session: AsyncSession = Depends(db_helper.scoped_session_dependency)):
-    return await crud.get_all_specialists(session=session)
+    return await service.get_all_specialists(session=session)
 
 
 @router.get("/specialists/{specialist_id}",response_model=SpecialistRespon)
@@ -29,7 +29,7 @@ async def add_specialist(
 ) -> SpecialistRespon:
     img_bytes = await avatar.read()  # Читаем байты изображения
     specialist_data = CreateSpecialist(last_name=last_name, first_name=first_name, avatar=img_bytes)
-    return await crud.create_specialist(session=session, specialist_data=specialist_data)
+    return await service.create_specialist(session=session, specialist_data=specialist_data)
 
 @router.put("/update_specialist/{id}", response_model=SpecialistRespon)
 async def update_specialist(
@@ -37,9 +37,9 @@ async def update_specialist(
         specialist_update: UpdateSpecialist,
         session: AsyncSession = Depends(db_helper.scoped_session_dependency),
 ):
-    return await crud.update_specialist(session=session, specialist_id=id, update_data=specialist_update)
+    return await service.update_specialist(session=session, specialist_id=id, update_data=specialist_update)
 
 
 @router.delete("/delete_specialist/{id}", status_code=204)
 async def delete_specialist(id: int, session: AsyncSession = Depends(db_helper.scoped_session_dependency)):
-    await crud.delete_specialist(session=session, specialist_id=id)
+    await service.delete_specialist(session=session, specialist_id=id)
