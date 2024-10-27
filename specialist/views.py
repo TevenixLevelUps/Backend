@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends, UploadFile, File
+from fastapi import APIRouter, Depends, UploadFile, File,Form
 from sqlalchemy.ext.asyncio import AsyncSession
 from starlette import status
 
@@ -22,8 +22,8 @@ async def get_specialist(result=Depends(get_specialist_by_id)):
 
 @router.post("/add_specialist/", status_code=status.HTTP_201_CREATED)
 async def add_specialist(
-        last_name: str = File(...),
-        first_name: str = File(...),
+        last_name: str = Form(...),
+        first_name: str = Form(...),
         avatar: UploadFile = File(...),
         session: AsyncSession = Depends(db_helper.scoped_session_dependency),
 ) -> SpecialistRespon:
