@@ -1,5 +1,6 @@
-from pydantic import BaseModel,ConfigDict
+from pydantic import BaseModel, ConfigDict
 from datetime import datetime
+
 
 class BaseOrder(BaseModel):
     client_name: str
@@ -7,8 +8,10 @@ class BaseOrder(BaseModel):
     specialist_name: str
     order_time: datetime
 
+
 class CreateOrder(BaseOrder):
     pass
+
 
 class Order(BaseOrder):
     id: int

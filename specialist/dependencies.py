@@ -8,8 +8,9 @@ from database.db_helper import db_helper
 from .service import get_specialist
 
 
-
-async def get_specialist_by_id(specialist_id: Annotated[int, Path],
-                               session: AsyncSession = Depends(db_helper.scoped_session_dependency)):
+async def get_specialist_by_id(
+    specialist_id: Annotated[int, Path],
+    session: AsyncSession = Depends(db_helper.scoped_session_dependency),
+):
     specialist = await get_specialist(session=session, specialist_id=specialist_id)
     return specialist

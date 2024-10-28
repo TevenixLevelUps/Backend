@@ -17,9 +17,6 @@ async def lifespan(app: FastAPI):
     yield
 
 
-
-
-
 app = FastAPI(lifespan=lifespan)
 
 
@@ -36,11 +33,9 @@ app.add_middleware(
 )
 
 
-
 app.include_router(specialist_router)
 app.include_router(orders_router)
 app.include_router(services_router)
 
 if __name__ == "__main__":
     uvicorn.run("main:app", reload=True)
-

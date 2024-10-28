@@ -3,7 +3,7 @@ from datetime import timedelta
 
 from typing import List
 
-from fastapi import status,HTTPException
+from fastapi import status, HTTPException
 from sqlalchemy import Select, or_, and_
 from sqlalchemy.ext.asyncio import AsyncSession
 
@@ -27,7 +27,10 @@ async def create_order(session: AsyncSession, order_in: CreateOrder):
     specialist = specialist_result.scalars().first()
 
     if not service or not specialist:
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Service  or specialist not found")
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Service  or specialist not found",
+        )
 
     # is_able = await is_specialist_available(
     #     session=session,
@@ -40,12 +43,19 @@ async def create_order(session: AsyncSession, order_in: CreateOrder):
         session=session,
         specialist_id=specialist.id,
         order_time=fix_time,
-        execution_time=service.execution_time
+        execution_time=service.execution_time,
     ):
-        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Specialist is not available at this time")
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="Specialist is not available at this time",
+        )
 
-    order = Orders(client_name=order_in.client_name, service_id=service.id, specialist_id=specialist.id,
-                   order_time=fix_time)
+    order = Orders(
+        client_name=order_in.client_name,
+        service_id=service.id,
+        specialist_id=specialist.id,
+        order_time=fix_time,
+    )
     session.add(order)
     await session.commit()
     await session.refresh(order)
@@ -74,10 +84,7 @@ async def round_near_five(dt: datetime):
 
 
 async def is_specialist_available(
-        session: AsyncSession,
-        specialist_id: int,
-        order_time: datetime,
-        execution_time: int
+    session: AsyncSession, specialist_id: int, order_time: datetime, execution_time: int
 ) -> bool:
     try:
         end_time = order_time + timedelta(minutes=execution_time)
@@ -88,10 +95,12 @@ async def is_specialist_available(
                 or_(
                     and_(Orders.order_time >= order_time, Orders.order_time < end_time),
                     and_(
-                        Orders.order_time + timedelta(minutes=execution_time) > order_time,
-                        Orders.order_time + timedelta(minutes=execution_time) <= end_time
-                    )
-                )
+                        Orders.order_time + timedelta(minutes=execution_time)
+                        > order_time,
+                        Orders.order_time + timedelta(minutes=execution_time)
+                        <= end_time,
+                    ),
+                ),
             )
         )
 

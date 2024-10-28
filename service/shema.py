@@ -1,5 +1,5 @@
 from typing import Any
-from pydantic import BaseModel,ConfigDict
+from pydantic import BaseModel, ConfigDict
 
 
 class BaseService(BaseModel):
@@ -12,9 +12,11 @@ class BaseService(BaseModel):
 class CreateService(BaseService):
     image: bytes | None = None
 
+
 class Service(CreateService):
     id: int
     model_config = ConfigDict(from_attributes=True)
+
 
 class ServiceRespon(BaseService):
     id: int

@@ -1,4 +1,3 @@
-
 from typing import TYPE_CHECKING
 
 from sqlalchemy.types import LargeBinary
@@ -10,14 +9,12 @@ if TYPE_CHECKING:
     from .orders import Orders
 
 
-
 class Service(Base):
 
-    name : Mapped[str] = mapped_column(String(25))
-    description : Mapped[str] = mapped_column(String(150))
-    price:Mapped[float] = mapped_column()
-    execution_time:Mapped[int] = mapped_column()
+    name: Mapped[str] = mapped_column(String(25))
+    description: Mapped[str] = mapped_column(String(150))
+    price: Mapped[float] = mapped_column()
+    execution_time: Mapped[int] = mapped_column()
     image: Mapped[bytes] = mapped_column(LargeBinary, nullable=False)
 
-
-    orders : Mapped["Orders"] = relationship(back_populates="service")
+    orders: Mapped["Orders"] = relationship(back_populates="service")

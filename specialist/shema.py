@@ -1,5 +1,6 @@
-from pydantic import BaseModel,ConfigDict
+from pydantic import BaseModel, ConfigDict
 from typing import Optional, Any
+
 
 class BaseSpecialist(BaseModel):
     last_name: str
@@ -9,8 +10,10 @@ class BaseSpecialist(BaseModel):
 class CreateSpecialist(BaseSpecialist):
     avatar: bytes | None = None
 
+
 class UpdateSpecialist(CreateSpecialist):
     pass
+
 
 class Specialist(CreateSpecialist):
     avatar_base64: Optional[Any]
@@ -21,4 +24,3 @@ class Specialist(CreateSpecialist):
 class SpecialistRespon(BaseSpecialist):
     id: int
     avatar_base64: Any
-

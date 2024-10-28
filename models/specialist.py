@@ -6,7 +6,7 @@ from sqlalchemy.types import LargeBinary
 from .base import Base
 
 if TYPE_CHECKING:
-    from .orders import  Orders
+    from .orders import Orders
 
 
 class Specialist(Base):
@@ -14,6 +14,6 @@ class Specialist(Base):
         String(20),
     )
     last_name: Mapped[str | None] = mapped_column(String(20))
-    avatar : Mapped [bytes ] = mapped_column(LargeBinary,nullable=False)
+    avatar: Mapped[bytes] = mapped_column(LargeBinary, nullable=False)
 
-    orders :Mapped["Orders"] = relationship(back_populates="specialist")
+    orders: Mapped["Orders"] = relationship(back_populates="specialist")
