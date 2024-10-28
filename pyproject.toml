@@ -12,6 +12,7 @@ pydantic = "^2.9.2"
 sqlalchemy = "^2.0.36"
 aiosqlite = "^0.20.0"
 image = "^1.5.33"
+alembic = "^1.13.3"
 
 
 [build-system]
