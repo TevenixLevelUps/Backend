@@ -1,26 +1,51 @@
 from datetime import datetime
 from datetime import timedelta
-from http.client import HTTPException
+
 from typing import List
 
-from fastapi import status
+from fastapi import status,HTTPException
 from sqlalchemy import Select, or_, and_
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from models.orders import Orders
+from models.service import Service
+from models.specialist import Specialist
 from .shema import CreateOrder
 
 
 async def create_order(session: AsyncSession, order_in: CreateOrder):
-    fix_time = round_near_five(order_in.order_time)
+    fix_time = await round_near_five(order_in.order_time)
 
-    is_able = await is_specialist_available(session=session, specialist_id=order_in.specialist_id, order_time=fix_time,
-                                            execution_time=order_in.execution_time)
+    service_result = await session.execute(
+        Select(Service).where(Service.name == order_in.service_name)
+    )
+    specialist_result = await session.execute(
+        Select(Specialist).where(Specialist.last_name == order_in.specialist_name)
+    )
 
-    if not is_able:
+    service = service_result.scalars().first()
+    specialist = specialist_result.scalars().first()
+
+    if not service or not specialist:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Service  or specialist not found")
+
+    # is_able = await is_specialist_available(
+    #     session=session,
+    #     specialist_id=specialist.id,
+    #     order_time=fix_time,
+    #     execution_time=service.execution_time
+    # )
+
+    if not await is_specialist_available(
+        session=session,
+        specialist_id=specialist.id,
+        order_time=fix_time,
+        execution_time=service.execution_time
+    ):
         raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Specialist is not available at this time")
 
-    order = Orders(**order_in.model_dump(), order_time=fix_time)
+    order = Orders(client_name=order_in.client_name, service_id=service.id, specialist_id=specialist.id,
+                   order_time=fix_time)
     session.add(order)
     await session.commit()
     await session.refresh(order)
@@ -54,17 +79,25 @@ async def is_specialist_available(
         order_time: datetime,
         execution_time: int
 ) -> bool:
-    end_time = order_time + timedelta(minutes=execution_time)
-    result = await session.execute(
-        Select(Orders).where(
-            Orders.specialist_id == specialist_id,
-            or_(
-                and_(Orders.order_time >= order_time, Orders.order_time < end_time),
-                and_(
-                    Orders.order_time + timedelta(minutes=execution_time) > order_time,
-                    Orders.order_time + timedelta(minutes=execution_time) <= end_time
+    try:
+        end_time = order_time + timedelta(minutes=execution_time)
+
+        result = await session.execute(
+            Select(Orders).where(
+                Orders.specialist_id == specialist_id,
+                or_(
+                    and_(Orders.order_time >= order_time, Orders.order_time < end_time),
+                    and_(
+                        Orders.order_time + timedelta(minutes=execution_time) > order_time,
+                        Orders.order_time + timedelta(minutes=execution_time) <= end_time
+                    )
                 )
             )
         )
-    )
-    return result.scalars().first() is None
+
+        orders = result.scalars().all()
+
+        return len(orders) == 0
+
+    except Exception as e:
+        return False

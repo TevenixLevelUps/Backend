@@ -12,17 +12,17 @@ router = APIRouter(tags=["Orders"])
 
 
 
-@router.get("/orders", response_model=List[Order])
+@router.get("/orders")
 async def get_orders(session : AsyncSession = Depends(db_helper.scoped_session_dependency)):
     return await  service.get_all_orders(session=session)
 
 
-@router.get("/orders/{id}", response_model=Order)
+@router.get("/orders/{id}")
 async def get_order(order = Depends(get_order_by_id)):
     return order
 
 
-@router.post("/orders_create", response_model=Order,status_code=status.HTTP_201_CREATED)
+@router.post("/orders_create",status_code=status.HTTP_201_CREATED)
 async def create_order(order_in: CreateOrder, session: AsyncSession = Depends(db_helper.scoped_session_dependency)):
     return  await service.create_order(order_in=order_in , session=session)
 

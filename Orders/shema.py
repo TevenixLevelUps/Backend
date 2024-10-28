@@ -3,8 +3,8 @@ from datetime import datetime
 
 class BaseOrder(BaseModel):
     client_name: str
-    service_id: int
-    specialist_id: int
+    service_name: str
+    specialist_name: str
     order_time: datetime
 
 class CreateOrder(BaseOrder):
