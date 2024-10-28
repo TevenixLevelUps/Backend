@@ -7,13 +7,13 @@ from .shema import CreateService, ServiceRespon
 
 
 async def create_service(session: AsyncSession, service_data: CreateService):
-    # Создаем новый объект Service
+
     service = Service(
         name=service_data.name,
         description=service_data.description,
         price=service_data.price,
         execution_time=service_data.execution_time,
-        image=service_data.image  # Сохраняем изображение как байты
+        image=service_data.image
     )
 
     session.add(service)
@@ -35,7 +35,6 @@ async def create_service(session: AsyncSession, service_data: CreateService):
 
 
 async def get_service_by_id(session: AsyncSession, service_id: int):
-    # Получаем услугу по ID
     result = await session.get(Service, service_id)
     if not result:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Service not found")
@@ -54,11 +53,11 @@ async def get_service_by_id(session: AsyncSession, service_id: int):
 
 
 async def get_all_services(session: AsyncSession):
-    # Получаем все услуги
+
     result = await session.execute(select(Service))
     services = result.scalars().all()
 
-    # Возвращаем список услуг
+
     return [
         ServiceRespon(
             id=service.id,
@@ -72,17 +71,17 @@ async def get_all_services(session: AsyncSession):
 
 
 async def update_service(session: AsyncSession, service_id: int, service_data: CreateService):
-    # Получаем услугу по ID
+
     service = await session.get(Service, service_id)
     if not service:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Service not found")
 
-    # Обновляем поля услуги
+
     service.name = service_data.name
     service.description = service_data.description
     service.price = service_data.price
     service.execution_time = service_data.execution_time
-    service.image = service_data.image  # Обновляем изображение
+    service.image = service_data.image
 
     await session.commit()
     await session.refresh(service)
@@ -101,7 +100,7 @@ async def update_service(session: AsyncSession, service_id: int, service_data: C
 
 
 async def delete_service(session: AsyncSession, service_id: int):
-    # Получаем услугу по ID
+
     service = await session.get(Service, service_id)
     if not service:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Service not found")

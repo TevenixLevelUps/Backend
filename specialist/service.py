@@ -1,7 +1,6 @@
 import base64
-from http.client import HTTPException
 
-from fastapi import status
+from fastapi import status,HTTPException
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.future import select
 
@@ -13,7 +12,7 @@ async def create_specialist(session: AsyncSession, specialist_data: CreateSpecia
     specialist = Specialist(
         last_name=specialist_data.last_name,
         first_name=specialist_data.first_name,
-        avatar=specialist_data.avatar  # Сохраняем аватар в бинарном виде
+        avatar=specialist_data.avatar
     )
 
     session.add(specialist)

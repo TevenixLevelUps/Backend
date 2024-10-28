@@ -1,7 +1,5 @@
-from http.client import HTTPException
-
 from sqlalchemy.ext.asyncio import AsyncSession
-from fastapi import Depends,status
+from fastapi import Depends,status,HTTPException
 from database.db_helper import  db_helper
 from .shema import Order
 from typing import Annotated

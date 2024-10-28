@@ -17,10 +17,10 @@ async def create_service(
         image: UploadFile = File(...),
         session: AsyncSession = Depends(db_helper.scoped_session_dependency)
 ):
-    # Читаем содержимое файла изображения
+
     image_bytes = await image.read()
 
-    # Создаем объект CreateService
+
     service_data = CreateService(
         name=name,
         description=description,
@@ -29,7 +29,7 @@ async def create_service(
         image=image_bytes
     )
 
-    # Сохраняем в базе данных и возвращаем результат
+
     return await service.create_service(session=session, service_data=service_data)
 
 @router.get("/services/{service_id}", response_model=ServiceRespon)
@@ -50,10 +50,10 @@ async def update_service(
         image: UploadFile = File(None),  # Поле может быть пустым
         session: AsyncSession = Depends(db_helper.scoped_session_dependency)
 ):
-    # Читаем содержимое файла изображения, если оно будет передано
+
     image_bytes = await (image.read() if image else None)
 
-    # Создаем объект CreateService
+
     service_data = CreateService(
         name=name,
         description=description,
