@@ -1,4 +1,4 @@
-from datetime import timedelta
+from datetime import timedelta, datetime
 from typing import Any
 from pydantic import BaseModel,ConfigDict
 
@@ -7,7 +7,7 @@ class BaseService(BaseModel):
     name: str
     description: str
     price: float
-    execution_time: timedelta
+    execution_time: int
 
 
 class CreateService(BaseService):
