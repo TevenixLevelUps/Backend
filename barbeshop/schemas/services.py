@@ -19,3 +19,6 @@ class ReadService(BaseModel):
     describe: str 
     price: float 
     time: str
+
+    def serializer(self):
+        return vars(self)

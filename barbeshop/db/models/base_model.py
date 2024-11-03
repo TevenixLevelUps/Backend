@@ -1,4 +1,4 @@
-from barbeshop.db.db_connect import Base
+from barbeshop.db.postgresql_db import Base
 from sqlalchemy import Column, Integer
 
 class BaseModel(Base):

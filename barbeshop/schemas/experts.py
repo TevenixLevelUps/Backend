@@ -10,3 +10,6 @@ class UpdateExpert(BaseModel):
 class ReadExpert(BaseModel):
     id: int | None = None 
     name: str | None = None 
+
+    def serializer(self):
+        return vars(self)

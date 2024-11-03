@@ -2,7 +2,6 @@ from pydantic import BaseModel, Field
 from barbeshop.addition.patterns import orders_pattern
 
 class CreateOrder(BaseModel):
-    id: int | None = None
     client_name: str = Field("P Diddi")
     expert_name: str = Field("Valeri Djmishenko")
     time_start: str | None = Field("13:00", pattern=orders_pattern)
@@ -23,3 +22,6 @@ class ReadOrder(BaseModel):
     time_start: str | None = None
     time_end: str | None = None
     id_service: int | None = None
+
+    def serializer(self):
+        return vars(self)

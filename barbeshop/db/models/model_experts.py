@@ -1,5 +1,5 @@
 from sqlalchemy import Column, Integer, String
-from barbeshop.db.db_connect import Base
+from barbeshop.db.postgresql_db import Base
 
 class Expert(Base):
     __tablename__ = 'experts'

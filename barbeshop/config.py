@@ -1,8 +1,5 @@
-from barbeshop.db.db_connect import Base
-from barbeshop.db.db_connect import engine
-from barbeshop.db.models.model_experts import Expert
-from barbeshop.db.models.model_orders import Order
-from barbeshop.db.models.model_services import Service
+from barbeshop.db.postgresql_db import Base
+from barbeshop.db.postgresql_db import engine
 
 origins = [
     "http://localhost",

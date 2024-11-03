@@ -1,5 +1,5 @@
 from sqlalchemy import Column, Integer, String, Float
-from barbeshop.db.db_connect import Base
+from barbeshop.db.postgresql_db import Base
 from barbeshop.db.models.base_model import BaseModel
 from sqlalchemy.orm import relationship
 
