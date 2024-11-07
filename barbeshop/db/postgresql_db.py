@@ -3,10 +3,10 @@ from sqlalchemy.orm import declarative_base
 
 Base = declarative_base()
 
-user = 'user_name'
-password = 'password'
+user = ''
+password = ''
 host = '127.0.0.1'
-database = 'db_name'
+database = ''
 
 def get_connection():
     return create_engine(url=f"postgresql+psycopg2://{user}:{password}@{host}/{database}")

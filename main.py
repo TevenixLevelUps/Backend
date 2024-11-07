@@ -15,7 +15,7 @@ app.add_middleware(CORSMiddleware,
                    allow_methods=["GET", "POST", "PATCH", "DELETE"],
                    allow_headers=["*"])
 
-app.add_middleware(SimpleLogging)
+# app.add_middleware(SimpleLogging)
 
 app.include_router(expert_router)
 app.include_router(order_router)

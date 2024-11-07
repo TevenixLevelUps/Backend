@@ -36,14 +36,14 @@ class ExpertDAO():
                 yield expert
 
     def return_expert(self, expert_id: int):
-        redis_expert = client.read_data(obj_id=expert_id, last_get="Expert")
+        redis_expert = client.get_obj("experts", expert_id)
         if redis_expert:
             return ReadExpert(id=redis_expert["id"], name=redis_expert["name"])
         with self._makesession() as session:
             expert = session.query(Expert).get(expert_id)
             if not expert:
                 raise HTTPException(status_code=400, detail="Expert not found.")
-            client.update_cache(ReadExpert(id=expert.id, name=expert.name))
+            client.add_hash_to_list("experts", ReadExpert(id=expert.id, name=expert.name).__dict__)
             return ReadExpert(id=expert.id, name=expert.name)
         
     def del_expert(self, expert_id: int):

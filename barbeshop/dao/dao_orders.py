@@ -28,7 +28,7 @@ class OrderDAO():
                 new_order = Order(id=deleted_order.id, client_name=order.client_name, expert_name=order.expert_name, time_start=order.time_start, time_end=time_plus_time(order.time_start, assotiated_service.time))
                 session.delete(deleted_order)
             else:
-                new_order = Order(client_name=order.client_name, expert_name=order.expert_name, time_start=order.time_start, time_end=time_plus_time(order.time_start, assotiated_service.time))  
+                new_order = Order(client_name=order.client_name, expert_name=order.expert_name, time_start=order.time_start, time_end=time_plus_time(order.time_start, assotiated_service.time).__dict__)  
             assotiated_service.orders.append(new_order)
             session.add(new_order)
             session.commit()
@@ -43,14 +43,14 @@ class OrderDAO():
                 yield order
 
     def return_order(self, order_id: int):
-        redis_order = client.read_data(obj_id=order_id, last_get="Order")
+        redis_order = client.get_obj("orders", order_id)
         if redis_order:
             return ReadOrder(id=redis_order["id"], client_name=redis_order["client_name"], expert_name=redis_order["expert_name"], time_start=redis_order["time_start"], time_end=redis_order["time_end"], id_service=redis_order["id_service"])
         with self._makesession() as session:
             order = session.query(Order).get(order_id)
             if not order:
                 raise HTTPException(status_code=400, detail="Order not found.")
-            client.update_cache(ReadOrder(id=order.id, client_name=order.client_name, expert_name=order.expert_name, time_start=order.time_start, time_end=order.time_end, id_service=order.id_service))
+            client.add_hash_to_list("orders", ReadOrder(id=order.id, client_name=order.client_name, expert_name=order.expert_name, time_start=order.time_start, time_end=order.time_end, id_service=order.id_service).__dict__)
             return ReadOrder(id=order.id, client_name=order.client_name, expert_name=order.expert_name, time_start=order.time_start, time_end=order.time_end, id_service=order.id_service)
         
     def del_order(self, order_id: int):

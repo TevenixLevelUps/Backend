@@ -36,14 +36,14 @@ class ServiceDAO():
                 yield service
 
     def return_service(self, service_id: int):
-        redis_service = client.read_data(obj_id=service_id, last_get="Service")
+        redis_service = client.get_obj("services", service_id)
         if redis_service:
             return ReadService(id=redis_service["id"], name=redis_service["name"], describe=redis_service["describe"], price=redis_service["price"], time=redis_service["time"])
         with self._makesession() as session:
             service = session.query(Service).get(service_id)
             if not service:
                 raise HTTPException(status_code=400, detail="Service not found.")
-            client.update_cache(ReadService(id=service.id, name=service.name, describe=service.describe, price=service.price, time=service.time))
+            client.add_hash_to_list("services", ReadService(id=service.id, name=service.name, describe=service.describe, price=service.price, time=service.time).__dict__)
             return ReadService(id=service.id, name=service.name, describe=service.describe, price=service.price, time=service.time)
     
     def update_service(self, service_id: int, update_service: UpdateService):
