@@ -1,13 +1,13 @@
 from contextlib import asynccontextmanager
-from fastapi.middleware.cors import CORSMiddleware
-from fastapi import FastAPI
+
+from fastapi import FastAPI,Request,Response
 import uvicorn
 from Orders.views import router as orders_router
 from service.views import router as services_router
 from specialist.views import router as specialist_router
 from database.db_helper import db_helper
 from models.base import Base
-
+from database import rate_limit
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
@@ -20,18 +20,11 @@ async def lifespan(app: FastAPI):
 app = FastAPI(lifespan=lifespan)
 
 
-origins = [
-    "http://localhost:8000",
-]
-
-app.add_middleware(
-    CORSMiddleware,
-    allow_origins=origins,
-    allow_credentials=True,
-    allow_methods=["*"],
-    allow_headers=["*"],
-)
-
+@app.middleware("http")
+async def limit_requests(request: Request, call_next):
+    await rate_limit(request, calls=10, period=60)  # 10 запросов в минуту
+    response = await call_next(request)
+    return response
 
 app.include_router(specialist_router)
 app.include_router(orders_router)
