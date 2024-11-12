@@ -6,10 +6,12 @@ from sqlalchemy.future import select
 
 from models.specialist import Specialist
 from .shema import CreateSpecialist, UpdateSpecialist, SpecialistRespon
+from database import cache_red, invalidate_cache
 
 
+@invalidate_cache
 async def create_specialist(
-    session: AsyncSession, specialist_data: CreateSpecialist
+        session: AsyncSession, specialist_data: CreateSpecialist
 ) -> SpecialistRespon:
     specialist = Specialist(
         last_name=specialist_data.last_name,
@@ -31,6 +33,7 @@ async def create_specialist(
     return specialist_resp
 
 
+@cache_red(SpecialistRespon)
 async def get_specialist(session: AsyncSession, specialist_id: int) -> SpecialistRespon:
     specialist = await session.get(Specialist, specialist_id)
     if not specialist:
@@ -53,6 +56,7 @@ async def get_specialist(session: AsyncSession, specialist_id: int) -> Specialis
     return specialist_resp
 
 
+@cache_red(SpecialistRespon)
 async def get_all_specialists(session: AsyncSession) -> list[dict]:
     result = await session.execute(select(Specialist))
     specialists = result.scalars().all()
@@ -70,8 +74,9 @@ async def get_all_specialists(session: AsyncSession) -> list[dict]:
     ]
 
 
+@invalidate_cache
 async def update_specialist(
-    session: AsyncSession, specialist_id: int, update_data: UpdateSpecialist
+        session: AsyncSession, specialist_id: int, update_data: UpdateSpecialist
 ):
     specialist = await session.get(Specialist, specialist_id)
 
@@ -102,6 +107,7 @@ async def update_specialist(
     return specialist_resp
 
 
+@invalidate_cache
 async def delete_specialist(session: AsyncSession, specialist_id: int):
     specialist = await session.get(Specialist, specialist_id)
 

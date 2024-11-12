@@ -10,9 +10,10 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from models.orders import Orders
 from models.service import Service
 from models.specialist import Specialist
-from .shema import CreateOrder
+from .shema import CreateOrder,Order as pydOrder
+from database import cache_red,invalidate_cache
 
-
+@invalidate_cache
 async def create_order(session: AsyncSession, order_in: CreateOrder):
     fix_time = await round_near_five(order_in.order_time)
 
@@ -61,18 +62,18 @@ async def create_order(session: AsyncSession, order_in: CreateOrder):
     await session.refresh(order)
     return order
 
-
+@cache_red(pydOrder)
 async def get_order(session: AsyncSession, order_id) -> Orders | None:
     return await session.get(Orders, order_id)
 
-
+@cache_red(pydOrder)
 async def get_all_orders(session: AsyncSession) -> List[Orders]:
     stat = Select(Orders).order_by(Orders.id)
     result = await session.execute(stat)
     orders = result.scalars().all()
     return list(orders)
 
-
+@invalidate_cache
 async def delete_order(session: AsyncSession, order: Orders) -> None:
     await session.delete(order)
     await session.commit()
