@@ -1,3 +1,5 @@
+version: '3.8'
+
 services:
   postgres:
     image: postgres:13
@@ -16,6 +18,12 @@ services:
     restart: always
     ports:
       - "${REDIS_PORT}:6379"
+
+  precommit:
+    image: pre-commit/pre-commit:latest  # Используйте официальный образ pre-commit
+    volumes:
+      - .:/mnt  # Монтируем текущую директорию
+    entrypoint: ["pre-commit", "run", "--all-files"]  # Команда для запуска pre-commit
 
 volumes:
   postgres_data:

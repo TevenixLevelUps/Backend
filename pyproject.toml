@@ -19,7 +19,11 @@ python-dotenv = "^1.0.1"
 redis = "^5.2.0"
 aioredis = "^2.0.1"
 setuptools = "^75.4.0"
+pre-commit = "^4.0.1"
 
+
+[tool.poetry.group.dev.dependencies]
+black = "^24.10.0"
 
 [build-system]
 requires = ["poetry-core"]

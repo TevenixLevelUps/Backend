@@ -4,7 +4,8 @@ from sqlalchemy.future import select
 from fastapi import HTTPException, status
 from models.service import Service
 from .shema import CreateService, ServiceRespon
-from database import cache_red,invalidate_cache
+from database import cache_red, invalidate_cache
+
 
 @invalidate_cache
 async def create_service(session: AsyncSession, service_data: CreateService):
@@ -34,6 +35,7 @@ async def create_service(session: AsyncSession, service_data: CreateService):
     )
     return service_return
 
+
 @cache_red(ServiceRespon)
 async def get_service_by_id(session: AsyncSession, service_id: int):
     result = await session.get(Service, service_id)
@@ -54,6 +56,7 @@ async def get_service_by_id(session: AsyncSession, service_id: int):
         avatar_base64=image_base64,
     )
 
+
 @cache_red(ServiceRespon)
 async def get_all_services(session: AsyncSession):
 
@@ -71,6 +74,7 @@ async def get_all_services(session: AsyncSession):
         )
         for service in services
     ]
+
 
 @invalidate_cache
 async def update_service(
@@ -103,6 +107,7 @@ async def update_service(
         execution_time=service.execution_time,
         avatar_base64=image_base64,
     )
+
 
 @invalidate_cache
 async def delete_service(session: AsyncSession, service_id: int):
