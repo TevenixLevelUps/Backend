@@ -13,6 +13,7 @@ pydantic-settings = "^2.5.2"
 alembic = "^1.13.3"
 asyncpg = "^0.29.0"
 python-multipart = "^0.0.12"
+fastapi-cache2 = {extras = ["redis"], version = "^0.2.2"}
 
 
 [build-system]
