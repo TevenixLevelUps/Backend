@@ -1,11 +1,14 @@
+import time
 from uuid import uuid4
 
 from fastapi import APIRouter, status, Depends
 from sqlalchemy.ext.asyncio import AsyncSession
+from fastapi_cache.decorator import cache
 
 from app.database import session_getter
 from app.services.dao import ServicesDAO
 from app.services.schemas import SServiceCreate, ServiceTitle
+from app.config import settings
 
 router = APIRouter(
     prefix="/services",
@@ -29,6 +32,7 @@ async def post_service(
 
 
 @router.get("/{service_title}/", response_model=SServiceCreate)
+@cache(expire=settings.redis.cache_expire_seconds)
 async def get_service(
         service_title: ServiceTitle,
         session: AsyncSession = Depends(session_getter),
@@ -38,6 +42,7 @@ async def get_service(
 
 
 @router.get("/", response_model=list[SServiceCreate])
+@cache(expire=settings.redis.cache_expire_seconds)
 async def get_services(session: AsyncSession = Depends(session_getter)):
     services = await ServicesDAO.find_all(session)
     return services

@@ -1,10 +1,12 @@
 from fastapi import APIRouter, status, Depends, File, Response, UploadFile
 from sqlalchemy.ext.asyncio import AsyncSession
+from fastapi_cache.decorator import cache
 
 from app.database import session_getter
 from app.services.dao import ServicesDAO
 from app.services.schemas import ServiceTitle
 from app.services.service_images.dao import ServiceImagesDAO
+from app.config import settings
 
 router = APIRouter(
     prefix="/service_images",
@@ -24,6 +26,7 @@ async def post_service_image(
 
 
 @router.get("/")
+@cache(expire=settings.redis.cache_expire_seconds)
 async def get_image(
         service_title: ServiceTitle,
         session: AsyncSession = Depends(session_getter),

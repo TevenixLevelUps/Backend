@@ -2,10 +2,12 @@ from uuid import uuid4
 
 from fastapi import APIRouter, Depends, status
 from sqlalchemy.ext.asyncio import AsyncSession
+from fastapi_cache.decorator import cache
 
 from app.database import session_getter
 from app.specialists.dao import SpecialistsDAO
 from app.specialists.schemas import SSpecialistGet, SSpecialistCreate
+from app.config import settings
 
 router = APIRouter(
     prefix="/specialists",
@@ -14,6 +16,7 @@ router = APIRouter(
 
 
 @router.get("/{specialist_name}/")
+@cache(expire=settings.redis.cache_expire_seconds)
 async def get_specialist(
         specialist_name: str,
         session: AsyncSession = Depends(session_getter),
@@ -24,6 +27,7 @@ async def get_specialist(
 
 
 @router.get("/")
+@cache(expire=settings.redis.cache_expire_seconds)
 async def get_specialists(session: AsyncSession = Depends(session_getter)) -> list[SSpecialistGet]:
     specialists = await SpecialistsDAO.find_all(session)
     return specialists

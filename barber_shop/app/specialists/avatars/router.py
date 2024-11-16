@@ -1,9 +1,11 @@
 from fastapi import APIRouter, status, Depends, File, Response, UploadFile
 from sqlalchemy.ext.asyncio import AsyncSession
+from fastapi_cache.decorator import cache
 
 from app.database import session_getter
 from app.specialists.avatars.dao import SpecialistAvatarsDAO
 from app.specialists.dao import SpecialistsDAO
+from app.config import settings
 
 router = APIRouter(
     prefix="/specialist_avatars",
@@ -23,6 +25,7 @@ async def post_specialist_avatar(
 
 
 @router.get("/")
+@cache(expire=settings.redis.cache_expire_seconds)
 async def get_avatar(
         specialist_name: str,
         session: AsyncSession = Depends(session_getter),

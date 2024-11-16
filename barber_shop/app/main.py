@@ -1,6 +1,10 @@
+from fastapi.concurrency import asynccontextmanager
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi import FastAPI, Request
+from fastapi_cache import FastAPICache
+from fastapi_cache.backends.redis import RedisBackend
 from starlette.middleware.base import BaseHTTPMiddleware
+from redis import asyncio as aioredis
 
 from app.exceptions import RateLimitException
 from app.services.router import router as services_router
@@ -9,6 +13,7 @@ from app.specialists.router import router as specialists_router
 from app.specialists.avatars.router import router as specialist_avatars_router
 from app.orders.router import router as orders_router
 from app.token_bucket import TokenBucket
+from app.config import settings
 
 
 def create_app() -> FastAPI:
@@ -17,6 +22,7 @@ def create_app() -> FastAPI:
         docs_url='/api/docs',
         description='Barber Shop for levelup',
         debug=True,
+        lifespan=lifespan,
     )
     app.include_router(services_router)
     app.include_router(service_images_router)
@@ -25,6 +31,10 @@ def create_app() -> FastAPI:
     app.include_router(orders_router)
 
     app.add_middleware(RateLimiterMiddleware, bucket=bucket)
+
+    origins = [
+        "*",
+    ]
 
     app.add_middleware(
         CORSMiddleware,
@@ -40,12 +50,19 @@ def create_app() -> FastAPI:
         ],
     )
 
+
     return app
 
 
-origins = [
-    "*",
-]
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    redis = aioredis.from_url(
+        f"redis://{settings.redis.host}:{settings.redis.port}",
+        encoding="utf-8",
+        decode_responses=True,
+    )
+    FastAPICache.init(RedisBackend(redis), prefix="cache")
+    yield
 
 
 class RateLimiterMiddleware(BaseHTTPMiddleware):
