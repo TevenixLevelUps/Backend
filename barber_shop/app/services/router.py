@@ -22,7 +22,7 @@ async def post_service(
     await ServicesDAO.add(
         session,
         id=uuid4(),
-        **service.dict(),
+        **service.model_dump(),
     )
     await session.commit()
     return {"message": "service added successfully"}
