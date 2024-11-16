@@ -31,6 +31,7 @@ class OrdersDAO(BaseDAO):
         new_service_end_time = order_time + new_service_duration
 
         orders = await cls.find_all(session, specialist_id=specialist_id)
+        print(orders)
         for order in orders:
             service = await ServicesDAO.find_one_or_none(session, id=order.service_id)
             service_duration = timedelta(
@@ -51,6 +52,8 @@ class OrdersDAO(BaseDAO):
     ) -> None:
         specialist = await SpecialistsDAO.find_specialist_by_name(session, order.specialist_name)
         service = await ServicesDAO.find_service_by_title(session, order.service_title)
+        await cls.check_order_time(session, order.order_time, service.lead_time, specialist.id)
+        
         await cls.add(
             session,
             id=uuid4(),
@@ -59,7 +62,6 @@ class OrdersDAO(BaseDAO):
             service_id=service.id,
             order_time=order.order_time,
         )
-        await cls.check_order_time(session, order.order_time, service.lead_time, specialist.id)
 
     @classmethod
     async def delete_order(

@@ -12,10 +12,18 @@ DB_HOST = settings.db.host
 DB_PORT = settings.db.port
 DB_NAME = settings.db.name
 
+TEST_DB_USER = settings.testdb.user
+TEST_DB_PASS = settings.testdb.password
+TEST_DB_HOST = settings.testdb.host
+TEST_DB_PORT = settings.testdb.port
+TEST_DB_NAME = settings.testdb.name
 
-DATABASE_URL = (
-    f"postgresql+asyncpg://{DB_USER}:{DB_PASS}@{DB_HOST}:{DB_PORT}/{DB_NAME}"
-)
+if settings.mode.mode == "TEST":
+    DATABASE_URL = f"postgresql+asyncpg://{TEST_DB_USER}:{TEST_DB_PASS}@{TEST_DB_HOST}:{TEST_DB_PORT}/{TEST_DB_NAME}"
+else:
+    DATABASE_URL = (
+        f"postgresql+asyncpg://{DB_USER}:{DB_PASS}@{DB_HOST}:{DB_PORT}/{DB_NAME}"
+    )
 
 engine = create_async_engine(DATABASE_URL, poolclass=NullPool)
 

@@ -57,6 +57,10 @@ class SpecialistsDAO(BaseDAO):
             avatar_id: UUID,
             specialist_id: UUID,
     ) -> None:
+        specialist = await cls.find_one_or_none(session, id=specialist_id)
+        if not specialist:
+            raise NoSuchSpecialistException
+
         update_specialist_stmt = (
             update(cls.model)
             .where(cls.model.id == specialist_id)

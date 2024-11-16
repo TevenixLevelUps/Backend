@@ -40,6 +40,10 @@ class ServicesDAO(BaseDAO):
             image_id: UUID,
             service_id: UUID,
     ) -> None:
+        service = await cls.find_one_or_none(session, id=service_id)
+        if not service:
+            raise NoSuchServiceException
+ 
         update_service_stmt = (
             update(cls.model)
             .where(cls.model.id == service_id)
@@ -55,6 +59,8 @@ class ServicesDAO(BaseDAO):
     ) -> None:
         from app.services.service_images.dao import ServiceImagesDAO
 
+        await cls.find_service_by_title(session, service_title)
+
         delete_service_stmt = (
             delete(cls.model)
             .where(cls.model.title == service_title)
@@ -68,9 +74,11 @@ class ServicesDAO(BaseDAO):
             session: AsyncSession,
             new_service: SServiceCreate,
     ) -> None:
+        await cls.find_service_by_title(session, new_service.title)
+
         update_service_stmt = (
             update(cls.model)
             .where(cls.model.title == new_service.title)
-            .values(**new_service.dict())
+            .values(**new_service.model_dump())
         )
         await session.execute(update_service_stmt)

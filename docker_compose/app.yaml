@@ -22,6 +22,8 @@ services:
       - ../.env
     depends_on:
       - db
+      - redis
+      - testdb
     volumes:
       - ../barber_shop/:/barber_shop/
     networks:
@@ -46,6 +48,19 @@ services:
     image: redis:7
     ports:
       - "6379:6379"
+    networks:
+      - backend
+
+  testdb:
+    image: postgres:17
+    environment:
+      POSTGRES_DB: ${APP_CONFIG__TESTDB__NAME}
+      POSTGRES_USER: ${APP_CONFIG__TESTDB__USER}
+      POSTGRES_PASSWORD: ${APP_CONFIG__TESTDB__PASSWORD}
+    ports:
+      - "5433:5432"
+    env_file:
+      - ../.env
     networks:
       - backend
 
