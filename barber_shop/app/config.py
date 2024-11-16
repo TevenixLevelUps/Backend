@@ -18,6 +18,7 @@ class RedisConfig(BaseModel):
     host: str
     port: int
     cache_expire_seconds: int
+    rate_limit_per_minute: int
 
 
 class Settings(BaseSettings):

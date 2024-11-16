@@ -1,19 +1,18 @@
+from typing import Awaitable, Callable
 from fastapi.concurrency import asynccontextmanager
 from fastapi.middleware.cors import CORSMiddleware
-from fastapi import FastAPI, Request
+from fastapi import FastAPI, Request, Response
+from fastapi.responses import JSONResponse
 from fastapi_cache import FastAPICache
 from fastapi_cache.backends.redis import RedisBackend
-from starlette.middleware.base import BaseHTTPMiddleware
-from redis import asyncio as aioredis
 
-from app.exceptions import RateLimitException
 from app.services.router import router as services_router
 from app.services.service_images.router import router as service_images_router
 from app.specialists.router import router as specialists_router
 from app.specialists.avatars.router import router as specialist_avatars_router
 from app.orders.router import router as orders_router
-from app.token_bucket import TokenBucket
 from app.config import settings
+from app.rate_limiter import rate_limit_user, redis_client
 
 
 def create_app() -> FastAPI:
@@ -29,8 +28,6 @@ def create_app() -> FastAPI:
     app.include_router(specialists_router)
     app.include_router(specialist_avatars_router)
     app.include_router(orders_router)
-
-    app.add_middleware(RateLimiterMiddleware, bucket=bucket)
 
     origins = [
         "*",
@@ -50,34 +47,25 @@ def create_app() -> FastAPI:
         ],
     )
 
+    @app.middleware("http")
+    async def rate_limit_middleware(
+        request: Request, 
+        call_next: Callable[[Request], Awaitable[Response]]
+    ) -> Response:
+        user = request.client.host
+        if user:
+            rate_limit_exceeded_response = await rate_limit_user(
+                user=user, rate_limit=settings.redis.rate_limit_per_minute
+            )
+            if rate_limit_exceeded_response:
+                return rate_limit_exceeded_response
 
+        return await call_next(request)
+    
     return app
 
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
-    redis = aioredis.from_url(
-        f"redis://{settings.redis.host}:{settings.redis.port}",
-        encoding="utf-8",
-        decode_responses=True,
-    )
-    FastAPICache.init(RedisBackend(redis), prefix="cache")
+    FastAPICache.init(RedisBackend(redis_client), prefix="cache")
     yield
-
-
-class RateLimiterMiddleware(BaseHTTPMiddleware):
-    def __init__(self, app, bucket: TokenBucket):
-        super().__init__(app)
-        self.bucket = bucket  # Initialize the middleware with a token bucket
-
-    async def dispatch(self, request: Request, call_next):
-        # Process each incoming request
-        if self.bucket.take_token():
-            # If a token is available, proceed with the request
-            return await call_next(request)
-        # If no tokens are available, return a 429 error (rate limit exceeded)
-        raise RateLimitException
-
-
-# Initialize the token bucket with 4 tokens capacity and refill rate of 2 tokens/second
-bucket = TokenBucket(capacity=4, refill_rate=2)
