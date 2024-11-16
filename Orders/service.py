@@ -10,8 +10,9 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from models.orders import Orders
 from models.service import Service
 from models.specialist import Specialist
-from .shema import CreateOrder,Order as pydOrder
-from database import cache_red,invalidate_cache
+from .shema import CreateOrder, Order as pydOrder
+from database import cache_red, invalidate_cache
+
 
 @invalidate_cache
 async def create_order(session: AsyncSession, order_in: CreateOrder):
@@ -32,13 +33,6 @@ async def create_order(session: AsyncSession, order_in: CreateOrder):
             status_code=status.HTTP_404_NOT_FOUND,
             detail="Service  or specialist not found",
         )
-
-    # is_able = await is_specialist_available(
-    #     session=session,
-    #     specialist_id=specialist.id,
-    #     order_time=fix_time,
-    #     execution_time=service.execution_time
-    # )
 
     if not await is_specialist_available(
         session=session,
@@ -62,9 +56,11 @@ async def create_order(session: AsyncSession, order_in: CreateOrder):
     await session.refresh(order)
     return order
 
+
 @cache_red(pydOrder)
 async def get_order(session: AsyncSession, order_id) -> Orders | None:
     return await session.get(Orders, order_id)
+
 
 @cache_red(pydOrder)
 async def get_all_orders(session: AsyncSession) -> List[Orders]:
@@ -72,6 +68,7 @@ async def get_all_orders(session: AsyncSession) -> List[Orders]:
     result = await session.execute(stat)
     orders = result.scalars().all()
     return list(orders)
+
 
 @invalidate_cache
 async def delete_order(session: AsyncSession, order: Orders) -> None:

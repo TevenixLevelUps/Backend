@@ -11,7 +11,7 @@ from database import cache_red, invalidate_cache
 
 @invalidate_cache
 async def create_specialist(
-        session: AsyncSession, specialist_data: CreateSpecialist
+    session: AsyncSession, specialist_data: CreateSpecialist
 ) -> SpecialistRespon:
     specialist = Specialist(
         last_name=specialist_data.last_name,
@@ -76,7 +76,7 @@ async def get_all_specialists(session: AsyncSession) -> list[dict]:
 
 @invalidate_cache
 async def update_specialist(
-        session: AsyncSession, specialist_id: int, update_data: UpdateSpecialist
+    session: AsyncSession, specialist_id: int, update_data: UpdateSpecialist
 ):
     specialist = await session.get(Specialist, specialist_id)
 

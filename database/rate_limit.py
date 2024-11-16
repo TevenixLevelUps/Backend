@@ -1,5 +1,5 @@
 import time
-from fastapi import Request, HTTPException,status
+from fastapi import Request, HTTPException, status
 from redis.asyncio import Redis
 from dotenv import load_dotenv
 import os
@@ -14,7 +14,7 @@ try:
 except ValueError:
     raise ValueError(f"Invalid REDIS_PORT value: {REDIS_PORT}")
 
-redis_client = Redis(host=f'{DB_HOST}', port=redis_port, db=0)
+redis_client = Redis(host=f"{DB_HOST}", port=redis_port, db=0)
 
 
 async def rate_limit(request: Request, calls: int, period: int):
@@ -30,6 +30,9 @@ async def rate_limit(request: Request, calls: int, period: int):
         current_count = int(current_count)
 
         if current_count >= calls:
-            raise HTTPException(status_code=status.HTTP_429_TOO_MANY_REQUESTS, detail="Too Many Requests")
+            raise HTTPException(
+                status_code=status.HTTP_429_TOO_MANY_REQUESTS,
+                detail="Too Many Requests",
+            )
 
         await redis_client.incr(key)
