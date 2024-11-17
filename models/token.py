@@ -18,5 +18,5 @@ class Token(Base):
         default=lambda: datetime.utcnow()
         + timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES),
     )
-    user_id: Mapped[int] = mapped_column(ForeignKey("users.id"), nullable=False)
+    user_id: Mapped[int] = mapped_column(ForeignKey("user.id"), nullable=False)
     user: Mapped["User"] = relationship("User", back_populates="tokens")

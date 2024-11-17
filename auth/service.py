@@ -18,10 +18,10 @@ def generate_confirmation_code():
 
 
 def send_confirmation_email(email: str, confirmation_code: str):
-    smtp_server = "smtp.your_email_provider.com"
+    smtp_server = "smtp.gmail.com"
     smtp_port = 587
-    smtp_username = "your_email@example.com"
-    smtp_password = "your_password"
+    smtp_username = "pilevichdima20@gmail.com"
+    smtp_password = "sxpq qwcy kffq zotu"
 
     message = MIMEText(f"Your confirmation code is {confirmation_code}")
     message["Subject"] = "Email Confirmation"

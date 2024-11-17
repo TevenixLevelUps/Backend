@@ -4,7 +4,6 @@ from .shemas import UserCreate, UserLogin, Token
 from database.db_helper import db_helper
 from .service import register_user, confirm_user_email, login_user, simple_login_user
 
-
 router = APIRouter()
 
 
