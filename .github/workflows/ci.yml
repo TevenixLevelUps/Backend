@@ -41,6 +41,27 @@ jobs:
       with:
         python-version: '3.12'
 
+    - name: Create .env file
+      run: |
+        echo "APP_CONFIG__MODE__MODE=${{ secrets.APP_CONFIG__MODE__MODE }}" >> .env
+
+        echo "APP_CONFIG__DB__USER=${{ secrets.APP_CONFIG__DB__USER }}" >> .env
+        echo "APP_CONFIG__DB__PASSWORD=${{ secrets.APP_CONFIG__DB__PASSWORD }}" >> .env
+        echo "APP_CONFIG__DB__HOST=${{ secrets.APP_CONFIG__DB__HOST }}" >> .env
+        echo "APP_CONFIG__DB__PORT=${{ secrets.APP_CONFIG__DB__PORT }}" >> .env
+        echo "APP_CONFIG__DB__NAME=${{ secrets.APP_CONFIG__DB__NAME }}" >> .env
+
+        echo "APP_CONFIG__REDIS__HOST=${{ secrets.APP_CONFIG__REDIS__HOST }}" >> .env
+        echo "APP_CONFIG__REDIS__PORT=${{ secrets.APP_CONFIG__REDIS__PORT }}" >> .env
+        echo "APP_CONFIG__REDIS__CACHE_EXPIRE_SECONDS=${{ secrets.APP_CONFIG__REDIS__CACHE_EXPIRE_SECONDS }}" >> .env
+        echo "APP_CONFIG__REDIS__RATE_LIMIT_PER_MINUTE=${{ secrets.APP_CONFIG__REDIS__RATE_LIMIT_PER_MINUTE }}" >> .env
+
+        echo "APP_CONFIG__TESTDB__USER=${{ secrets.APP_CONFIG__TESTDB__USER }}" >> .env
+        echo "APP_CONFIG__TESTDB__PASSWORD=${{ secrets.APP_CONFIG__TESTDB__PASSWORD }}" >> .env
+        echo "APP_CONFIG__TESTDB__HOST=${{ secrets.APP_CONFIG__TESTDB__HOST }}" >> .env
+        echo "APP_CONFIG__TESTDB__PORT=${{ secrets.APP_CONFIG__TESTDB__PORT }}" >> .env
+        echo "APP_CONFIG__TESTDB__NAME=${{ secrets.APP_CONFIG__TESTDB__NAME }}" >> .env
+
     - name: Install Poetry
       run: |
         curl -sSL https://install.python-poetry.org | python3 -
