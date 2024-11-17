@@ -1,18 +1,17 @@
-from datetime import timedelta, timezone, datetime
 import hashlib
-from fastapi.responses import JSONResponse
-from redis import asyncio as aioredis
-from fastapi import status
+from datetime import datetime, timedelta, timezone
 
 from app.config import settings
-
+from fastapi import status
+from fastapi.responses import JSONResponse
+from redis import asyncio as aioredis
 
 redis_client = aioredis.from_url(
     f"redis://{settings.redis.host}:{settings.redis.port}",
     encoding="utf-8",
     decode_responses=True,
 )
- 
+
 
 async def rate_limit_user(user: str, rate_limit: int) -> JSONResponse | None:
     username_hash = hashlib.sha256(bytes(user, "utf-8")).hexdigest()
