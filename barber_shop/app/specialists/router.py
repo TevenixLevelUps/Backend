@@ -42,7 +42,7 @@ async def post_specialist(
     await SpecialistsDAO.add(
         session,
         id=uuid4(),
-        **specialist.dict(),
+        **specialist.model_dump(),
     )
     await session.commit()
     return {"message": "specialist added successfully"}
