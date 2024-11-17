@@ -1,5 +1,5 @@
 DC = docker compose
-EXEC = docker exec -it
+EXEC = docker exec
 LOGS = docker logs
 ENV = --env-file .env
 APP_FILE = docker_compose/app.yaml
