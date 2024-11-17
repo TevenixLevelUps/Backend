@@ -51,13 +51,14 @@ def create_app() -> FastAPI:
         request: Request, 
         call_next: Callable[[Request], Awaitable[Response]]
     ) -> Response:
-        user = request.client.host
-        if user:
-            rate_limit_exceeded_response = await rate_limit_user(
-                user=user, rate_limit=settings.redis.rate_limit_per_minute
-            )
-            if rate_limit_exceeded_response:
-                return rate_limit_exceeded_response
+        if settings.mode.mode != "TEST":
+            user = request.client.host
+            if user:
+                rate_limit_exceeded_response = await rate_limit_user(
+                    user=user, rate_limit=settings.redis.rate_limit_per_minute
+                )
+                if rate_limit_exceeded_response:
+                    return rate_limit_exceeded_response
 
         return await call_next(request)
     

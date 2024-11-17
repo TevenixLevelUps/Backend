@@ -30,8 +30,8 @@ async def test_get_services(
 
 @pytest.mark.asyncio
 @pytest.mark.parametrize("title,description,price,lead_time,is_service_present,excpected_services_count", [
-    ("NewService", "description", 120.0, "13:30", False, 5),
-    ("Erakez", "description", 10.0, "18:30", True, 4),
+    ("NewService", "description", 120.0, "13:30:00", False, 5),
+    ("Erakez", "description", 10.0, "18:30:00", True, 4),
 ])
 async def test_post_service(
     title: str,
@@ -98,7 +98,7 @@ async def test_delete_service(
     ("NewService", "description1", 120.0, "13:30:00", False),
     ("Erakez", "description2", 10.0, "18:30:00", True),
 ])
-async def test_post_service(
+async def test_put_service(
     title: str,
     description: str,
     price: float,
