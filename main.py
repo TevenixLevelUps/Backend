@@ -5,6 +5,7 @@ import uvicorn
 from Orders.views import router as orders_router
 from service.views import router as services_router
 from specialist.views import router as specialist_router
+from auth.views import router as auth_router
 from database.db_helper import db_helper
 from models.base import Base
 from database import rate_limit
@@ -28,6 +29,7 @@ async def limit_requests(request: Request, call_next):
     return response
 
 
+app.include_router(auth_router)
 app.include_router(specialist_router)
 app.include_router(orders_router)
 app.include_router(services_router)

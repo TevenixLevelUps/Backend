@@ -1,66 +1,112 @@
-from fastapi import Depends, HTTPException
-from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
-from jose import JWTError, jwt
-from datetime import datetime, timedelta
+import uuid
+import smtplib
+from email.mime.text import MIMEText
+from fastapi import HTTPException, status
+from sqlalchemy import Select  # Изменено import для select
+from sqlalchemy.ext.asyncio import AsyncSession
 from passlib.context import CryptContext
-from .models import User
-from .email_verification import send_verification_email
-import os
-
-SECRET_KEY = os.getenv(
-    "SECRET_KEY", "your_secret_key"
-)  # Замените на ваш секретный ключ
-ALGORITHM = "HS256"
-ACCESS_TOKEN_EXPIRE_MINUTES = 5
-
-oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token")
+from . import jwt
+from .shemas import UserLogin, UserCreate
+from models.user import User
 
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
 
-class AuthService:
-    def __init__(self):
-        self.users_db = {}
+def generate_confirmation_code():
+    return str(uuid.uuid4())
 
-    def create_user(self, email: str, password: str):
-        hashed_password = self.get_password_hash(password)
-        user = User(email=email, hashed_password=hashed_password, is_verified=False)
-        self.users_db[email] = user
-        send_verification_email(email)  # Отправляем email для подтверждения
 
-    def get_password_hash(self, password: str):
-        return pwd_context.hash(password)
+def send_confirmation_email(email: str, confirmation_code: str):
+    smtp_server = "smtp.your_email_provider.com"
+    smtp_port = 587
+    smtp_username = "your_email@example.com"
+    smtp_password = "your_password"
 
-    def verify_password(self, plain_password, hashed_password):
-        return pwd_context.verify(plain_password, hashed_password)
+    message = MIMEText(f"Your confirmation code is {confirmation_code}")
+    message["Subject"] = "Email Confirmation"
+    message["From"] = smtp_username
+    message["To"] = email
 
-    def create_access_token(self, data: dict, expires_delta: timedelta | None = None):
-        to_encode = data.copy()
-        if expires_delta:
-            expire = datetime.utcnow() + expires_delta
-        else:
-            expire = datetime.utcnow() + timedelta(minutes=15)
-        to_encode.update({"exp": expire})
-        encoded_jwt = jwt.encode(to_encode, SECRET_KEY, algorithm=ALGORITHM)
-        return encoded_jwt
+    with smtplib.SMTP(smtp_server, smtp_port) as server:
+        server.starttls()
+        server.login(smtp_username, smtp_password)
+        server.sendmail(smtp_username, [email], message.as_string())
 
-    async def get_current_user(self, token: str = Depends(oauth2_scheme)):
-        credentials_exception = HTTPException(
-            status_code=401,
-            detail="Could not validate credentials",
+
+async def register_user(user: UserCreate, session: AsyncSession):
+    stmt = Select(User).where(User.email == user.email)
+    result = await session.execute(stmt)
+    db_user = result.scalars().first()
+    if db_user:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Email already registered",
+        )
+    hashed_password = pwd_context.hash(user.password)
+    confirmation_code = generate_confirmation_code()
+    send_confirmation_email(user.email, confirmation_code)
+    db_user = User(
+        email=user.email,
+        hashed_password=hashed_password,
+        confirmation_code=confirmation_code,
+    )
+    session.add(db_user)
+    await session.commit()
+    await session.refresh(db_user)
+    return {"message": "Confirmation code sent to your email"}
+
+
+async def confirm_user_email(email: str, code: str, session: AsyncSession):
+    stmt = Select(User).where(User.email == email)
+    result = await session.execute(stmt)
+    db_user = result.scalars().first()
+    if db_user is None or db_user.confirmation_code != code:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Invalid confirmation code",
+        )
+    db_user.is_confirmed = True
+    db_user.confirmation_code = None  # Remove the confirmation code after confirmation
+    session.add(db_user)
+    await session.commit()
+    return {"message": "Email confirmed"}
+
+
+async def login_user(user: UserLogin, session: AsyncSession):
+    stmt = Select(User).where(User.email == user.email)  # Изменено на select
+    result = await session.execute(stmt)
+    db_user = result.scalars().first()
+    if not db_user or not pwd_context.verify(user.password, db_user.hashed_password):
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Incorrect email or password",
             headers={"WWW-Authenticate": "Bearer"},
         )
-        try:
-            payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
-            email: str = payload.get("sub")
-            if email is None:
-                raise credentials_exception
-            user = self.users_db.get(email)
-            if user is None or not user.is_verified:
-                raise credentials_exception
-        except JWTError:
-            raise credentials_exception
-        return user
+    if not db_user.is_confirmed:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Email not confirmed",
+            headers={"WWW-Authenticate": "Bearer"},
+        )
+    access_token = jwt.create_access_token(data={"sub": db_user.email})
+    return {"access_token": access_token, "token_type": "bearer"}
 
 
-auth_service = AuthService()
+async def simple_login_user(user: UserLogin, session: AsyncSession):
+    stmt = Select(User).where(User.email == user.email)
+    result = await session.execute(stmt)
+    db_user = result.scalars().first()
+    if not db_user or not pwd_context.verify(user.password, db_user.hashed_password):
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Incorrect email or password",
+            headers={"WWW-Authenticate": "Bearer"},
+        )
+    if not db_user.is_confirmed:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Email not confirmed",
+            headers={"WWW-Authenticate": "Bearer"},
+        )
+    access_token = jwt.create_access_token(data={"sub": db_user.email})
+    return {"access_token": access_token, "token_type": "bearer"}
