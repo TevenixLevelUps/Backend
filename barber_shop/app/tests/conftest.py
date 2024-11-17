@@ -1,7 +1,9 @@
+import asyncio
 import json
 from datetime import datetime
 
 from fastapi.testclient import TestClient
+import httpcore
 import pytest_asyncio
 from httpx import AsyncClient, ASGITransport
 from sqlalchemy import insert
@@ -65,3 +67,18 @@ def app() -> TestClient:
     FastAPICache.init(RedisBackend(redis_client), prefix="cache") 
     app = create_app()
     return app
+
+
+@pytest_asyncio.fixture(scope="session")
+def event_loop(request):
+    """
+    Redefine the event loop to support session/module-scoped fixtures;
+    see https://github.com/pytest-dev/pytest-asyncio/issues/68
+    """
+    policy = asyncio.get_event_loop_policy()
+    loop = policy.new_event_loop()
+
+    try:
+        yield loop
+    finally:
+        loop.close()
