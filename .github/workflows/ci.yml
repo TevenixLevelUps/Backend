@@ -16,11 +16,6 @@ jobs:
     - name: Checkout code
       uses: actions/checkout@v2
 
-    - name: Set up Python 3.12
-      uses: actions/setup-python@v2
-      with:
-        python-version: '3.12'
-
     - name: Create .env file
       run: |
         echo "APP_CONFIG__MODE__MODE=${{ secrets.APP_CONFIG__MODE__MODE }}" >> .env
@@ -41,15 +36,6 @@ jobs:
         echo "APP_CONFIG__TESTDB__HOST=${{ secrets.APP_CONFIG__TESTDB__HOST }}" >> .env
         echo "APP_CONFIG__TESTDB__PORT=${{ secrets.APP_CONFIG__TESTDB__PORT }}" >> .env
         echo "APP_CONFIG__TESTDB__NAME=${{ secrets.APP_CONFIG__TESTDB__NAME }}" >> .env
-
-    - name: Install Poetry
-      run: |
-        curl -sSL https://install.python-poetry.org | python3 -
-
-    - name: Install dependencies
-      run: |
-        pip install poetry
-        poetry install
 
     - name: Start application
       run: make app
