@@ -1,6 +1,6 @@
 from datetime import datetime
-import pytest
 
+import pytest
 from app.database import async_session_maker
 from app.orders.dao import OrdersDAO
 from app.orders.schemas import SOrderCreate, SOrderGet
@@ -33,5 +33,5 @@ async def test_create_order(
             order_time=order_time,
         )
         await session.commit()
-    
+
     assert order

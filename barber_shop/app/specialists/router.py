@@ -1,13 +1,12 @@
 from uuid import uuid4
 
-from fastapi import APIRouter, Depends, status
-from sqlalchemy.ext.asyncio import AsyncSession
-from fastapi_cache.decorator import cache
-
+from app.config import settings
 from app.database import session_getter
 from app.specialists.dao import SpecialistsDAO
-from app.specialists.schemas import SSpecialistGet, SSpecialistCreate
-from app.config import settings
+from app.specialists.schemas import SSpecialistCreate, SSpecialistGet
+from fastapi import APIRouter, Depends, status
+from fastapi_cache.decorator import cache
+from sqlalchemy.ext.asyncio import AsyncSession
 
 router = APIRouter(
     prefix="/specialists",

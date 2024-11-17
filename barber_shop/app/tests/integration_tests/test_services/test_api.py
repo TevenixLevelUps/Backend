@@ -1,14 +1,14 @@
+from datetime import datetime
 from decimal import Decimal
 from time import time
-from datetime import datetime
-from fastapi import FastAPI, status
-from pydantic import PositiveInt
-import pytest
-from httpx import AsyncClient
 
+import pytest
 from app.database import async_session_maker
 from app.services.dao import ServicesDAO
 from app.services.schemas import SServiceGet
+from fastapi import FastAPI, status
+from httpx import AsyncClient
+from pydantic import PositiveInt
 
 
 @pytest.mark.asyncio
@@ -49,7 +49,7 @@ async def test_post_service(
         json={
             "title": title,
             "description": description,
-            "price": price, 
+            "price": price,
             "lead_time": lead_time,
         }
     )
@@ -113,7 +113,7 @@ async def test_put_service(
         json={
             "title": title,
             "description": description,
-            "price": price, 
+            "price": price,
             "lead_time": lead_time,
         }
     )
@@ -121,7 +121,7 @@ async def test_put_service(
         async with async_session_maker() as session:
             service: SServiceGet = await ServicesDAO.find_service_by_title(session, title)
             await session.commit()
-        
+
         assert response.status_code == status.HTTP_200_OK
         assert service.description == description
         assert service.price == price

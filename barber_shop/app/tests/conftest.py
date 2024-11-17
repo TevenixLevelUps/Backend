@@ -2,28 +2,26 @@ import asyncio
 import json
 from datetime import datetime
 
-from fastapi.testclient import TestClient
 import httpcore
 import pytest_asyncio
-from httpx import AsyncClient, ASGITransport
-from sqlalchemy import insert
-from fastapi_cache.backends.redis import RedisBackend
-from fastapi_cache import FastAPICache
-
-from app.rate_limiter import redis_client
 from app.config import settings
 from app.database import Base, async_session_maker, engine
 from app.main import create_app
-
-from app.services.models import Services
 from app.orders.models import Orders
+from app.rate_limiter import redis_client
+from app.services.models import Services
 from app.specialists.models import Specialists
+from fastapi.testclient import TestClient
+from fastapi_cache import FastAPICache
+from fastapi_cache.backends.redis import RedisBackend
+from httpx import ASGITransport, AsyncClient
+from sqlalchemy import insert
 
 
 @pytest_asyncio.fixture(scope="function", autouse=True)
 async def prepare_database():
     assert settings.mode.mode == "TEST"
-    
+
     async with engine.begin() as conn:
         await conn.run_sync(Base.metadata.drop_all)
         await conn.run_sync(Base.metadata.create_all)
@@ -64,7 +62,7 @@ async def ac():
 
 @pytest_asyncio.fixture
 def app() -> TestClient:
-    FastAPICache.init(RedisBackend(redis_client), prefix="cache") 
+    FastAPICache.init(RedisBackend(redis_client), prefix="cache")
     app = create_app()
     return app
 

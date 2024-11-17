@@ -1,9 +1,8 @@
+import pytest
+from app.database import async_session_maker
+from app.orders.dao import OrdersDAO
 from fastapi import FastAPI, status
 from httpx import AsyncClient
-import pytest
-
-from app.orders.dao import OrdersDAO
-from app.database import async_session_maker
 
 
 @pytest.mark.asyncio
@@ -19,7 +18,7 @@ async def test_get_orders(
         orders_count = len(await OrdersDAO.find_all(session))
         await session.commit()
 
-    assert len(response.json()) == orders_count 
+    assert len(response.json()) == orders_count
     assert response.status_code == status.HTTP_200_OK
 
 

@@ -1,13 +1,13 @@
+from datetime import time
 from decimal import Decimal
 from uuid import UUID
-from datetime import time
 
 import pytest
-
 from app.database import async_session_maker
-from app.services.dao import ServicesDAO
 from app.exceptions import NoSuchServiceException
+from app.services.dao import ServicesDAO
 from app.services.schemas import SServiceCreate, SServiceGet
+
 
 @pytest.mark.asyncio
 @pytest.mark.parametrize("service_id,is_service_present", [
@@ -51,9 +51,9 @@ async def test_delete_service(service_title: str, is_service_present: bool) -> N
     ("WrongTitle", "description2", Decimal(20), time(13, 43, 23), False),
 ])
 async def test_update_service(
-        title: str, 
-        description: str, 
-        price: Decimal, 
+        title: str,
+        description: str,
+        price: Decimal,
         lead_time: time,
         is_service_present: bool,
     ) -> None:
@@ -69,7 +69,7 @@ async def test_update_service(
             await session.commit()
 
             service: SServiceGet = await ServicesDAO.find_one_or_none(session, title=title)
-            
+
             assert service
             assert service.title == title
             assert service.description == description
@@ -96,9 +96,9 @@ async def test_update_service_image_id(
             await ServicesDAO.update_image_id(session, new_image_id, service_id)
             service: SServiceGet = await ServicesDAO.find_one_or_none(session, id=service_id)
             await session.commit()
-        
+
         assert service
         assert str(service.image_id) == new_image_id
-        
+
     except NoSuchServiceException:
         assert not is_service_present

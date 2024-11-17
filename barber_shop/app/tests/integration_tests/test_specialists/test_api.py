@@ -1,13 +1,13 @@
+from datetime import datetime
 from decimal import Decimal
 from time import time
-from datetime import datetime
-from fastapi import FastAPI, status
-from pydantic import PositiveInt
-import pytest
-from httpx import AsyncClient
 
+import pytest
 from app.database import async_session_maker
 from app.specialists.dao import SpecialistsDAO
+from fastapi import FastAPI, status
+from httpx import AsyncClient
+from pydantic import PositiveInt
 
 
 @pytest.mark.asyncio

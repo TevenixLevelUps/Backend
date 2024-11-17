@@ -1,9 +1,9 @@
 from uuid import UUID
-import pytest
 
-from app.specialists.dao import SpecialistsDAO
-from app.exceptions import NoSuchSpecialistException
+import pytest
 from app.database import async_session_maker
+from app.exceptions import NoSuchSpecialistException
+from app.specialists.dao import SpecialistsDAO
 from app.specialists.schemas import SSpecialistGet
 
 
@@ -19,9 +19,9 @@ async def test_delete_service(specialist_name: str, is_specialist_present: bool)
 
             specialist = await SpecialistsDAO.find_one_or_none(session, name=specialist_name)
             await session.commit()
-            
+
             assert not specialist
-    
+
     except NoSuchSpecialistException:
         assert not is_specialist_present
 
@@ -42,9 +42,9 @@ async def test_update_specialist_image_id(
             await SpecialistsDAO.update_avatar_id(session, new_avatar_id, specialist_id)
             specialist: SSpecialistGet = await SpecialistsDAO.find_one_or_none(session, id=specialist_id)
             await session.commit()
-        
+
         assert specialist
         assert str(specialist.avatar_id) == new_avatar_id
-        
+
     except NoSuchSpecialistException:
         assert not is_specialist_present

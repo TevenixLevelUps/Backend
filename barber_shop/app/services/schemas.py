@@ -1,6 +1,6 @@
 from datetime import time
 from decimal import Decimal
-from typing import TypeAlias, Annotated
+from typing import Annotated, TypeAlias
 from uuid import UUID
 
 from annotated_types import MaxLen

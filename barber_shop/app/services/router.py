@@ -1,14 +1,13 @@
 import time
 from uuid import uuid4
 
-from fastapi import APIRouter, status, Depends
-from sqlalchemy.ext.asyncio import AsyncSession
-from fastapi_cache.decorator import cache
-
+from app.config import settings
 from app.database import session_getter
 from app.services.dao import ServicesDAO
-from app.services.schemas import SServiceCreate, ServiceTitle
-from app.config import settings
+from app.services.schemas import ServiceTitle, SServiceCreate
+from fastapi import APIRouter, Depends, status
+from fastapi_cache.decorator import cache
+from sqlalchemy.ext.asyncio import AsyncSession
 
 router = APIRouter(
     prefix="/services",

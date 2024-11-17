@@ -1,10 +1,9 @@
 from typing import AsyncGenerator
 
+from app.config import settings
 from sqlalchemy import NullPool
 from sqlalchemy.ext.asyncio import AsyncSession, create_async_engine
 from sqlalchemy.orm import DeclarativeBase, sessionmaker
-
-from app.config import settings
 
 DB_USER = settings.db.user
 DB_PASS = settings.db.password

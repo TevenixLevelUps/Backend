@@ -1,10 +1,9 @@
 import pytest
+from app.database import async_session_maker
+from app.services.dao import ServicesDAO
 from fastapi import FastAPI, status
 from httpx import AsyncClient
 from pydantic import PositiveInt
-
-from app.database import async_session_maker
-from app.services.dao import ServicesDAO
 
 
 @pytest.mark.asyncio
@@ -39,7 +38,7 @@ async def test_post_service(
         json={
             "title": title,
             "description": description,
-            "price": price, 
+            "price": price,
             "lead_time": lead_time,
         }
     )
@@ -56,6 +55,6 @@ async def test_post_service(
     response_get_after_post = await ac.get(
         get_services_url,
     )
-    
+
     assert response_get_after_post.status_code == status.HTTP_200_OK
     assert len(response_get_after_post.json()) == excpected_services_count

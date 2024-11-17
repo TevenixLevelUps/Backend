@@ -1,12 +1,12 @@
 from uuid import UUID
 
-from sqlalchemy import update, delete
-from sqlalchemy.ext.asyncio import AsyncSession
-
 from app.dao.base import BaseDAO
-from app.exceptions import NoSuchServiceException, ServiceAlreadyExistsException
+from app.exceptions import (NoSuchServiceException,
+                            ServiceAlreadyExistsException)
 from app.services.models import Services
-from app.services.schemas import SServiceGet, ServiceTitle, SServiceCreate
+from app.services.schemas import ServiceTitle, SServiceCreate, SServiceGet
+from sqlalchemy import delete, update
+from sqlalchemy.ext.asyncio import AsyncSession
 
 
 class ServicesDAO(BaseDAO):
@@ -43,7 +43,7 @@ class ServicesDAO(BaseDAO):
         service = await cls.find_one_or_none(session, id=service_id)
         if not service:
             raise NoSuchServiceException
- 
+
         update_service_stmt = (
             update(cls.model)
             .where(cls.model.id == service_id)
