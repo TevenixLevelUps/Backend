@@ -1,8 +1,9 @@
 from fastapi import APIRouter, Depends
 from sqlalchemy.ext.asyncio import AsyncSession
-from .shemas import UserCreate, Token, UserLogin
+from .shemas import UserCreate, UserLogin, Token
 from database.db_helper import db_helper
 from .service import register_user, confirm_user_email, login_user, simple_login_user
+
 
 router = APIRouter()
 
@@ -24,7 +25,7 @@ async def confirm_email(
     return await confirm_user_email(email, code, session)
 
 
-@router.post("/login", response_model=Token)
+@router.post("/login")
 async def login(
     user: UserLogin,
     session: AsyncSession = Depends(db_helper.scoped_session_dependency),

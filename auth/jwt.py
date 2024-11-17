@@ -8,7 +8,7 @@ from .utils import (
     get_algorithm,
 )  # Новые функции для чтения ключей
 
-ACCESS_TOKEN_EXPIRE_MINUTES = get_access_token_exp_min()
+ACCESS_TOKEN_EXPIRE_MINUTES = 30
 ALGORITHM = get_algorithm()
 
 

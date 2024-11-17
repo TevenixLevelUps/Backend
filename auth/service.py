@@ -9,6 +9,7 @@ from . import jwt
 from .shemas import UserLogin, UserCreate
 from models.user import User
 
+
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
 
