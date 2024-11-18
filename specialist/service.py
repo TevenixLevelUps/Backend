@@ -1,17 +1,21 @@
 import base64
 
-from fastapi import status, HTTPException
+from fastapi import status, HTTPException, Depends
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.future import select
 
 from models.specialist import Specialist
 from .shema import CreateSpecialist, UpdateSpecialist, SpecialistRespon
 from database import cache_red, invalidate_cache
+from models.user import User
+from auth.dependencies import get_current_admin, get_current_user
 
 
 @invalidate_cache
 async def create_specialist(
-    session: AsyncSession, specialist_data: CreateSpecialist
+    session: AsyncSession,
+    specialist_data: CreateSpecialist,
+    admin: User = Depends(get_current_admin),
 ) -> SpecialistRespon:
     specialist = Specialist(
         last_name=specialist_data.last_name,
@@ -34,7 +38,9 @@ async def create_specialist(
 
 
 @cache_red(SpecialistRespon)
-async def get_specialist(session: AsyncSession, specialist_id: int) -> SpecialistRespon:
+async def get_specialist(
+    session: AsyncSession, specialist_id: int, user: User = Depends(get_current_user)
+) -> SpecialistRespon:
     specialist = await session.get(Specialist, specialist_id)
     if not specialist:
         raise HTTPException(
@@ -57,7 +63,9 @@ async def get_specialist(session: AsyncSession, specialist_id: int) -> Specialis
 
 
 @cache_red(SpecialistRespon)
-async def get_all_specialists(session: AsyncSession) -> list[dict]:
+async def get_all_specialists(
+    session: AsyncSession, user: User = Depends(get_current_user)
+) -> list[dict]:
     result = await session.execute(select(Specialist))
     specialists = result.scalars().all()
 
@@ -76,7 +84,10 @@ async def get_all_specialists(session: AsyncSession) -> list[dict]:
 
 @invalidate_cache
 async def update_specialist(
-    session: AsyncSession, specialist_id: int, update_data: UpdateSpecialist
+    session: AsyncSession,
+    specialist_id: int,
+    update_data: UpdateSpecialist,
+    admin: User = Depends(get_current_admin),
 ):
     specialist = await session.get(Specialist, specialist_id)
 
@@ -108,7 +119,9 @@ async def update_specialist(
 
 
 @invalidate_cache
-async def delete_specialist(session: AsyncSession, specialist_id: int):
+async def delete_specialist(
+    session: AsyncSession, specialist_id: int, admin: User = Depends(get_current_admin)
+):
     specialist = await session.get(Specialist, specialist_id)
 
     if not specialist:
