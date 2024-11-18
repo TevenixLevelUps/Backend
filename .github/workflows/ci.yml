@@ -9,7 +9,7 @@ on:
       - main
 
 jobs:
-  build:
+  ci:
     runs-on: ubuntu-latest
 
     steps:
@@ -42,6 +42,10 @@ jobs:
 
     - name: Run tests
       run: make test
+
+    - name: Run isort
+      run: |
+        isort . --check-only --diff
 
     - name: Tear down
       run: make app-down
