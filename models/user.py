@@ -13,4 +13,5 @@ class User(Base):
     is_active: Mapped[bool] = mapped_column(default=True)
     is_confirmed: Mapped[bool] = mapped_column(default=False)
     confirmation_code: Mapped[str] = mapped_column(unique=True, nullable=True)
+    role: Mapped[str] = mapped_column(default="user")
     tokens: Mapped["Token"] = relationship(back_populates="user")
