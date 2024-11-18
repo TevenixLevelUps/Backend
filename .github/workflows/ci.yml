@@ -47,7 +47,7 @@ jobs:
       run: make test
 
     - name: Run isort
-      run: make lint
+      run: make lint-diff
 
     - name: Tear down
       run: make app-down

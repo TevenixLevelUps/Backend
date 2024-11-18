@@ -29,6 +29,10 @@ test:
 test-cov:
 	${EXEC} ${APP_CONTAINER} pytest --cov=$(path)
 
-.PHONY: lint
+.PHONY: lint-diff
 lint:
 	${EXEC} ${APP_CONTAINER} isort . --check-only --diff
+
+.PHONY: lint
+lint:
+	${EXEC} ${APP_CONTAINER} isort .
