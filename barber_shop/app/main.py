@@ -1,3 +1,4 @@
+from time import time
 from typing import Awaitable, Callable
 
 from fastapi import FastAPI, Request, Response
@@ -7,6 +8,7 @@ from fastapi_cache import FastAPICache
 from fastapi_cache.backends.redis import RedisBackend
 
 from app.config import settings
+from app.logger import logger
 from app.orders.router import router as orders_router
 from app.rate_limiter import rate_limit_user, redis_client
 from app.services.router import router as services_router
@@ -62,6 +64,17 @@ def create_app() -> FastAPI:
                     return rate_limit_exceeded_response
 
         return await call_next(request)
+
+
+    @app.middleware("http")
+    async def add_process_time_header(request: Request, call_next):
+        start_time = time()
+        response = await call_next(request)
+        process_time = time() - start_time
+        logger.info("Request handling time", extra={
+            "process_time": round(process_time, 4)
+        })
+        return response
 
     return app
 

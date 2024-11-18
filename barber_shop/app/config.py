@@ -35,6 +35,10 @@ class ModeConfig(BaseModel):
     mode: Literal["DEV", "TEST", "PROD"]
 
 
+class LoggerConfig(BaseModel):
+    level: Literal["DEBUG", "INFO", "WARNING", "ERROR", "CRITICAL"]
+
+
 class Settings(BaseSettings):
     model_config = SettingsConfigDict(
         env_file="../.env",
@@ -48,6 +52,6 @@ class Settings(BaseSettings):
     redis: RedisConfig
     testdb: TestDatabaseConfig
     mode: ModeConfig
-
+    logger: LoggerConfig
 
 settings = Settings()
