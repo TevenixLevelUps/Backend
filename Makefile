@@ -24,3 +24,7 @@ app-logs:
 .PHONY: test
 test:
 	${EXEC} ${APP_CONTAINER} pytest $(path)
+
+.PHONY: test-cov
+test-cov:
+	${EXEC} ${APP_CONTAINER} pytest --cov=$(path)
