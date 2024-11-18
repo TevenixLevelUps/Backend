@@ -44,8 +44,7 @@ jobs:
       run: make test
 
     - name: Run isort
-      run: |
-        isort . --check-only --diff
+      run: make lint
 
     - name: Tear down
       run: make app-down
