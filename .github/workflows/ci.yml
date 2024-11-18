@@ -21,6 +21,8 @@ jobs:
       run: |
         echo "APP_CONFIG__MODE__MODE=${{ secrets.APP_CONFIG__MODE__MODE }}" >> .env
 
+        echo "APP_CONFIG__LOGGER__LEVEL=${{ secrets.APP_CONFIG__LOGGER__LEVEL }}" >> .env
+
         echo "APP_CONFIG__DB__USER=${{ secrets.APP_CONFIG__DB__USER }}" >> .env
         echo "APP_CONFIG__DB__PASSWORD=${{ secrets.APP_CONFIG__DB__PASSWORD }}" >> .env
         echo "APP_CONFIG__DB__HOST=${{ secrets.APP_CONFIG__DB__HOST }}" >> .env
