@@ -1,10 +1,11 @@
+from fastapi import APIRouter, Depends, File, Response, UploadFile, status
+from fastapi_cache.decorator import cache
+from sqlalchemy.ext.asyncio import AsyncSession
+
 from app.config import settings
 from app.database import session_getter
 from app.specialists.avatars.dao import SpecialistAvatarsDAO
 from app.specialists.dao import SpecialistsDAO
-from fastapi import APIRouter, Depends, File, Response, UploadFile, status
-from fastapi_cache.decorator import cache
-from sqlalchemy.ext.asyncio import AsyncSession
 
 router = APIRouter(
     prefix="/specialist_avatars",

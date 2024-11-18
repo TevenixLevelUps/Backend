@@ -1,8 +1,9 @@
 from datetime import datetime
 from uuid import UUID
 
-from app.services.schemas import ServiceTitle
 from pydantic import BaseModel
+
+from app.services.schemas import ServiceTitle
 
 
 class SOrderGet(BaseModel):

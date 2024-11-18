@@ -1,11 +1,12 @@
+from fastapi import APIRouter, Depends, File, Response, UploadFile, status
+from fastapi_cache.decorator import cache
+from sqlalchemy.ext.asyncio import AsyncSession
+
 from app.config import settings
 from app.database import session_getter
 from app.services.dao import ServicesDAO
 from app.services.schemas import ServiceTitle
 from app.services.service_images.dao import ServiceImagesDAO
-from fastapi import APIRouter, Depends, File, Response, UploadFile, status
-from fastapi_cache.decorator import cache
-from sqlalchemy.ext.asyncio import AsyncSession
 
 router = APIRouter(
     prefix="/service_images",

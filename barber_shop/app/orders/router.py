@@ -1,3 +1,8 @@
+from fastapi import APIRouter, Depends, status
+from fastapi_cache.decorator import cache
+from sqlalchemy.exc import DBAPIError
+from sqlalchemy.ext.asyncio import AsyncSession
+
 from app.config import settings
 from app.database import session_getter
 from app.exceptions import WrongTimeException
@@ -5,10 +10,6 @@ from app.orders.dao import OrdersDAO
 from app.orders.schemas import SOrderCreate
 from app.services.dao import ServicesDAO
 from app.specialists.dao import SpecialistsDAO
-from fastapi import APIRouter, Depends, status
-from fastapi_cache.decorator import cache
-from sqlalchemy.exc import DBAPIError
-from sqlalchemy.ext.asyncio import AsyncSession
 
 router = APIRouter(
     prefix="/orders",

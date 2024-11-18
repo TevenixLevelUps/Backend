@@ -1,10 +1,11 @@
 import hashlib
 from datetime import datetime, timedelta, timezone
 
-from app.config import settings
 from fastapi import status
 from fastapi.responses import JSONResponse
 from redis import asyncio as aioredis
+
+from app.config import settings
 
 redis_client = aioredis.from_url(
     f"redis://{settings.redis.host}:{settings.redis.port}",

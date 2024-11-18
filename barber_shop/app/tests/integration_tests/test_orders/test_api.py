@@ -1,8 +1,9 @@
 import pytest
-from app.database import async_session_maker
-from app.orders.dao import OrdersDAO
 from fastapi import FastAPI, status
 from httpx import AsyncClient
+
+from app.database import async_session_maker
+from app.orders.dao import OrdersDAO
 
 
 @pytest.mark.asyncio

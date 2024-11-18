@@ -1,14 +1,15 @@
 from uuid import UUID, uuid4
 
+from fastapi import UploadFile
+from sqlalchemy import delete
+from sqlalchemy.ext.asyncio import AsyncSession
+
 from app.dao.base import BaseDAO
 from app.exceptions import (AvatarForThisSpecialistAlreadyExistsException,
                             NoSuchSpecialistAvatarException, NotImageException)
 from app.services.service_images.schemas import SServiceImage
 from app.specialists.avatars.models import SpecialistAvatars
 from app.specialists.dao import SpecialistsDAO
-from fastapi import UploadFile
-from sqlalchemy import delete
-from sqlalchemy.ext.asyncio import AsyncSession
 
 
 class SpecialistAvatarsDAO(BaseDAO):

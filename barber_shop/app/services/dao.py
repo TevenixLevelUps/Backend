@@ -1,12 +1,13 @@
 from uuid import UUID
 
+from sqlalchemy import delete, update
+from sqlalchemy.ext.asyncio import AsyncSession
+
 from app.dao.base import BaseDAO
 from app.exceptions import (NoSuchServiceException,
                             ServiceAlreadyExistsException)
 from app.services.models import Services
 from app.services.schemas import ServiceTitle, SServiceCreate, SServiceGet
-from sqlalchemy import delete, update
-from sqlalchemy.ext.asyncio import AsyncSession
 
 
 class ServicesDAO(BaseDAO):

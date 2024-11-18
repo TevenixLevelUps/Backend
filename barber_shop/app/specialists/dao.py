@@ -1,12 +1,13 @@
 from uuid import UUID
 
+from sqlalchemy import delete, update
+from sqlalchemy.ext.asyncio import AsyncSession
+
 from app.dao.base import BaseDAO
 from app.exceptions import (NoSuchSpecialistException,
                             SpecialistAlreadyExistsException)
 from app.specialists.models import Specialists
 from app.specialists.schemas import SSpecialistGet
-from sqlalchemy import delete, update
-from sqlalchemy.ext.asyncio import AsyncSession
 
 
 class SpecialistsDAO(BaseDAO):

@@ -1,7 +1,8 @@
 from uuid import UUID
 
-from app.database import Base
 from sqlalchemy.orm import Mapped, mapped_column
+
+from app.database import Base
 
 
 class SpecialistAvatars(Base):

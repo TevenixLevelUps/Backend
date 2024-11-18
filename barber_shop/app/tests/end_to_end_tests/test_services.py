@@ -1,9 +1,10 @@
 import pytest
-from app.database import async_session_maker
-from app.services.dao import ServicesDAO
 from fastapi import FastAPI, status
 from httpx import AsyncClient
 from pydantic import PositiveInt
+
+from app.database import async_session_maker
+from app.services.dao import ServicesDAO
 
 
 @pytest.mark.asyncio

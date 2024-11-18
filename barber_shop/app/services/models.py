@@ -2,8 +2,9 @@ from datetime import time
 from decimal import Decimal
 from uuid import UUID
 
-from app.database import Base
 from sqlalchemy.orm import Mapped, mapped_column
+
+from app.database import Base
 
 
 class Services(Base):

@@ -3,12 +3,13 @@ from decimal import Decimal
 from time import time
 
 import pytest
-from app.database import async_session_maker
-from app.services.dao import ServicesDAO
-from app.services.schemas import SServiceGet
 from fastapi import FastAPI, status
 from httpx import AsyncClient
 from pydantic import PositiveInt
+
+from app.database import async_session_maker
+from app.services.dao import ServicesDAO
+from app.services.schemas import SServiceGet
 
 
 @pytest.mark.asyncio

@@ -1,6 +1,7 @@
 from uuid import UUID
 
 import pytest
+
 from app.database import async_session_maker
 from app.exceptions import NoSuchSpecialistException
 from app.specialists.dao import SpecialistsDAO

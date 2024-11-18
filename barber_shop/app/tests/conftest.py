@@ -4,6 +4,12 @@ from datetime import datetime
 
 import httpcore
 import pytest_asyncio
+from fastapi.testclient import TestClient
+from fastapi_cache import FastAPICache
+from fastapi_cache.backends.redis import RedisBackend
+from httpx import ASGITransport, AsyncClient
+from sqlalchemy import insert
+
 from app.config import settings
 from app.database import Base, async_session_maker, engine
 from app.main import create_app
@@ -11,11 +17,6 @@ from app.orders.models import Orders
 from app.rate_limiter import redis_client
 from app.services.models import Services
 from app.specialists.models import Specialists
-from fastapi.testclient import TestClient
-from fastapi_cache import FastAPICache
-from fastapi_cache.backends.redis import RedisBackend
-from httpx import ASGITransport, AsyncClient
-from sqlalchemy import insert
 
 
 @pytest_asyncio.fixture(scope="function", autouse=True)

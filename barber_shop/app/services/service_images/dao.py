@@ -1,5 +1,9 @@
 from uuid import UUID, uuid4
 
+from fastapi import UploadFile
+from sqlalchemy import delete
+from sqlalchemy.ext.asyncio import AsyncSession
+
 from app.dao.base import BaseDAO
 from app.exceptions import (ImageForThisServiceAlreadyExistsException,
                             NoSuchServiceImageException, NotImageException)
@@ -7,9 +11,6 @@ from app.services.dao import ServicesDAO
 from app.services.schemas import ServiceTitle
 from app.services.service_images.models import ServiceImages
 from app.services.service_images.schemas import SServiceImage
-from fastapi import UploadFile
-from sqlalchemy import delete
-from sqlalchemy.ext.asyncio import AsyncSession
 
 
 class ServiceImagesDAO(BaseDAO):

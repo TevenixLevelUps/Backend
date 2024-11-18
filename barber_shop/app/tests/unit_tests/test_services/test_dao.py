@@ -3,6 +3,7 @@ from decimal import Decimal
 from uuid import UUID
 
 import pytest
+
 from app.database import async_session_maker
 from app.exceptions import NoSuchServiceException
 from app.services.dao import ServicesDAO

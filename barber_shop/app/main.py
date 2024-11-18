@@ -1,5 +1,11 @@
 from typing import Awaitable, Callable
 
+from fastapi import FastAPI, Request, Response
+from fastapi.concurrency import asynccontextmanager
+from fastapi.middleware.cors import CORSMiddleware
+from fastapi_cache import FastAPICache
+from fastapi_cache.backends.redis import RedisBackend
+
 from app.config import settings
 from app.orders.router import router as orders_router
 from app.rate_limiter import rate_limit_user, redis_client
@@ -7,11 +13,6 @@ from app.services.router import router as services_router
 from app.services.service_images.router import router as service_images_router
 from app.specialists.avatars.router import router as specialist_avatars_router
 from app.specialists.router import router as specialists_router
-from fastapi import FastAPI, Request, Response
-from fastapi.concurrency import asynccontextmanager
-from fastapi.middleware.cors import CORSMiddleware
-from fastapi_cache import FastAPICache
-from fastapi_cache.backends.redis import RedisBackend
 
 
 def create_app() -> FastAPI:
