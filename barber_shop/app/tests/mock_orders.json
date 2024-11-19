@@ -1,0 +1,23 @@
+[
+    {
+        "id": "770e8400-e29b-41d4-a716-446655440000",
+        "customer_name": "John Doe",
+        "service_id": "550e8400-e29b-41d4-a716-446655440000",
+        "specialist_id": "660e8400-e29b-41d4-a716-446655440000",
+        "order_time": "2023-11-16T10:00:00"
+    },
+    {
+        "id": "770e8400-e29b-41d4-a716-446655440001",
+        "customer_name": "Jane Smith",
+        "service_id": "550e8400-e29b-41d4-a716-446655440002",
+        "specialist_id": "660e8400-e29b-41d4-a716-446655440002",
+        "order_time": "2023-11-16T11:30:00"
+    },
+    {
+        "id": "770e8400-e29b-41d4-a716-446655440002",
+        "customer_name": "Emily Davis",
+        "service_id": "550e8400-e29b-41d4-a716-446655440004",
+        "specialist_id": "660e8400-e29b-41d4-a716-446655440003",
+        "order_time": "2023-11-16T14:00:00"
+    }
+]
