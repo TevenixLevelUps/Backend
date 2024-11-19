@@ -1,0 +1,30 @@
+[tool.poetry]
+name = "level-up-barbershop"
+version = "0.1.0"
+description = ""
+authors = ["Dmitriy Pilevich <pilevichdima60@gmail.com>"]
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "^3.12"
+fastapi = {extras = ["all"], version = "^0.115.3"}
+pydantic = "^2.9.2"
+sqlalchemy = "^2.0.36"
+aiosqlite = "^0.20.0"
+image = "^1.5.33"
+alembic = "^1.13.3"
+black = "^24.10.0"
+asyncpg = "^0.30.0"
+python-dotenv = "^1.0.1"
+redis = "^5.2.0"
+aioredis = "^2.0.1"
+setuptools = "^75.4.0"
+pre-commit = "^4.0.1"
+
+
+[tool.poetry.group.dev.dependencies]
+black = "^24.10.0"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
