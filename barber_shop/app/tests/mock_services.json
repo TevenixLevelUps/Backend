@@ -1,0 +1,34 @@
+[
+    {
+        "id": "550e8400-e29b-41d4-a716-446655440000",
+        "title": "Haircut",
+        "description": "A stylish haircut for men and women.",
+        "price": 25,
+        "lead_time": "01:30:00",
+        "image_id": "650e8400-e29b-41d4-a716-446655440001"
+    },
+    {
+        "id": "550e8400-e29b-41d4-a716-446655440002",
+        "title": "Manicure",
+        "description": "Nail care and beautification.",
+        "price": 15,
+        "lead_time": "01:45:00",
+        "image_id": "650e8400-e29b-41d4-a716-446655440003"
+    },
+    {
+        "id": "550e8400-e29b-41d4-a716-446655440004",
+        "title": "Massage",
+        "description": "Relaxing full body massage.",
+        "price": 50,
+        "lead_time": "01:00:00",
+        "image_id": null
+    },
+    {
+        "id": "550e8400-e29b-41d4-a716-446655440006",
+        "title": "Erakez",
+        "description": "Cool Erakez",
+        "price": 999,
+        "lead_time": "05:00:00",
+        "image_id": null
+    }
+]
