@@ -1,0 +1,43 @@
+version: '3.9'
+
+services:
+  api:
+    build:
+      context: ./barbeshop
+    container_name: api_server
+    ports:
+     - "8000:8000"
+    depends_on:
+      - db
+      - redis
+    environment:
+      DATABASE__URL: postgresql+psycopg2://user:password@host/database
+      REDIS_URL: redis://redis:6000/0
+    networks:
+      - app_network
+
+  db: 
+    image: postges:17
+    container_name: postgres_db
+    networks:
+      - app_network
+    environment:
+      POSTGERS_USER: user
+      POSTGRES_PASSWORD: password 
+      POSTGRES_NAME: db_name
+    volumes:
+      - db_data:/barbeshop/db/data
+
+  redis:
+    image: redis:7
+    container_name: redis_cache
+    ports:
+      - "6000:6000"
+    networks:
+      - app_network
+
+volumes:
+  db_data:
+
+networks:
+  app_network:
