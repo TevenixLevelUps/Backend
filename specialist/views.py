@@ -4,8 +4,10 @@ from starlette import status
 
 from database.db_helper import db_helper
 from . import service
+from models.user import User
 from .dependencies import get_specialist_by_id
 from .shema import CreateSpecialist, UpdateSpecialist, SpecialistRespon
+from auth.dependencies import get_current_admin, get_current_user
 
 router = APIRouter(tags=["specialist"])
 
@@ -13,12 +15,16 @@ router = APIRouter(tags=["specialist"])
 @router.get("/specialists", response_model=list[SpecialistRespon])
 async def get_all_specialists(
     session: AsyncSession = Depends(db_helper.scoped_session_dependency),
+    user: User = Depends(get_current_user),
 ):
     return await service.get_all_specialists(session=session)
 
 
 @router.get("/specialists/{specialist_id}", response_model=SpecialistRespon)
-async def get_specialist(result=Depends(get_specialist_by_id)):
+async def get_specialist(
+    result=Depends(get_specialist_by_id),
+    user: User = Depends(get_current_user),
+):
     return result
 
 
@@ -28,6 +34,7 @@ async def add_specialist(
     first_name: str = Form(...),
     avatar: UploadFile = File(...),
     session: AsyncSession = Depends(db_helper.scoped_session_dependency),
+    admin: User = Depends(get_current_admin),
 ) -> SpecialistRespon:
     img_bytes = await avatar.read()  # Читаем байты изображения
     specialist_data = CreateSpecialist(
@@ -43,6 +50,7 @@ async def update_specialist(
     id: int,
     specialist_update: UpdateSpecialist,
     session: AsyncSession = Depends(db_helper.scoped_session_dependency),
+    admin: User = Depends(get_current_admin),
 ):
     return await service.update_specialist(
         session=session, specialist_id=id, update_data=specialist_update
@@ -51,6 +59,8 @@ async def update_specialist(
 
 @router.delete("/delete_specialist/{id}", status_code=204)
 async def delete_specialist(
-    id: int, session: AsyncSession = Depends(db_helper.scoped_session_dependency)
+    id: int,
+    session: AsyncSession = Depends(db_helper.scoped_session_dependency),
+    user: User = Depends(get_current_user),
 ):
     await service.delete_specialist(session=session, specialist_id=id)

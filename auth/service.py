@@ -91,23 +91,3 @@ async def login_user(user: UserLogin, session: AsyncSession):
         )
     access_token = jwt.create_access_token(data={"sub": db_user.email})
     return {"access_token": access_token, "token_type": "bearer"}
-
-
-async def simple_login_user(user: UserLogin, session: AsyncSession):
-    stmt = Select(User).where(User.email == user.email)
-    result = await session.execute(stmt)
-    db_user = result.scalars().first()
-    if not db_user or not pwd_context.verify(user.password, db_user.hashed_password):
-        raise HTTPException(
-            status_code=status.HTTP_401_UNAUTHORIZED,
-            detail="Incorrect email or password",
-            headers={"WWW-Authenticate": "Bearer"},
-        )
-    if not db_user.is_confirmed:
-        raise HTTPException(
-            status_code=status.HTTP_401_UNAUTHORIZED,
-            detail="Email not confirmed",
-            headers={"WWW-Authenticate": "Bearer"},
-        )
-    access_token = jwt.create_access_token(data={"sub": db_user.email})
-    return {"access_token": access_token, "token_type": "bearer"}

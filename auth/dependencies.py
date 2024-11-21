@@ -13,7 +13,7 @@ oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token")
 
 async def get_current_user(
     token: str = Depends(oauth2_scheme),
-    db: AsyncSession = Depends(db_helper.scoped_session_dependency),
+    session: AsyncSession = Depends(db_helper.scoped_session_dependency),
 ):
     credentials_exception = HTTPException(
         status_code=status.HTTP_401_UNAUTHORIZED,
@@ -22,7 +22,7 @@ async def get_current_user(
     )
     token_data = jwt.verify_token(token, credentials_exception)
     stmt = Select(User).where(User.email == token_data.email)
-    result = await db.execute(stmt)
+    result = await session.execute(stmt)
     user = result.scalars().first()
     if user is None:
         raise credentials_exception
@@ -35,4 +35,4 @@ async def get_current_admin(current_user: User = Depends(get_current_user)):
             status_code=status.HTTP_403_FORBIDDEN,
             detail="You do not have permission to perform this action",
         )
-        return current_user
+    return current_user

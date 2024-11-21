@@ -15,7 +15,6 @@ from auth.dependencies import get_current_admin, get_current_user
 async def create_specialist(
     session: AsyncSession,
     specialist_data: CreateSpecialist,
-    admin: User = Depends(get_current_admin),
 ) -> SpecialistRespon:
     specialist = Specialist(
         last_name=specialist_data.last_name,
@@ -39,7 +38,8 @@ async def create_specialist(
 
 @cache_red(SpecialistRespon)
 async def get_specialist(
-    session: AsyncSession, specialist_id: int, user: User = Depends(get_current_user)
+    session: AsyncSession,
+    specialist_id: int,
 ) -> SpecialistRespon:
     specialist = await session.get(Specialist, specialist_id)
     if not specialist:
@@ -64,7 +64,7 @@ async def get_specialist(
 
 @cache_red(SpecialistRespon)
 async def get_all_specialists(
-    session: AsyncSession, user: User = Depends(get_current_user)
+    session: AsyncSession,
 ) -> list[dict]:
     result = await session.execute(select(Specialist))
     specialists = result.scalars().all()
@@ -87,7 +87,6 @@ async def update_specialist(
     session: AsyncSession,
     specialist_id: int,
     update_data: UpdateSpecialist,
-    admin: User = Depends(get_current_admin),
 ):
     specialist = await session.get(Specialist, specialist_id)
 
@@ -119,9 +118,7 @@ async def update_specialist(
 
 
 @invalidate_cache
-async def delete_specialist(
-    session: AsyncSession, specialist_id: int, admin: User = Depends(get_current_admin)
-):
+async def delete_specialist(session: AsyncSession, specialist_id: int):
     specialist = await session.get(Specialist, specialist_id)
 
     if not specialist:

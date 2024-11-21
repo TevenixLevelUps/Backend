@@ -10,16 +10,12 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from models.orders import Orders
 from models.service import Service
 from models.specialist import Specialist
-from models.user import User
 from .shema import CreateOrder, Order as pydOrder
 from database import cache_red, invalidate_cache
-from auth.dependencies import get_current_admin, get_current_user
 
 
 @invalidate_cache
-async def create_order(
-    session: AsyncSession, order_in: CreateOrder, user: User = Depends(get_current_user)
-):
+async def create_order(session: AsyncSession, order_in: CreateOrder):
     fix_time = await round_near_five(order_in.order_time)
 
     service_result = await session.execute(
@@ -62,15 +58,13 @@ async def create_order(
 
 
 @cache_red(pydOrder)
-async def get_order(
-    session: AsyncSession, order_id, user: User = Depends(get_current_user)
-) -> Orders | None:
+async def get_order(session: AsyncSession, order_id) -> Orders | None:
     return await session.get(Orders, order_id)
 
 
 @cache_red(pydOrder)
 async def get_all_orders(
-    session: AsyncSession, user: User = Depends(get_current_user)
+    session: AsyncSession,
 ) -> List[Orders]:
     stat = Select(Orders).order_by(Orders.id)
     result = await session.execute(stat)
@@ -79,9 +73,7 @@ async def get_all_orders(
 
 
 @invalidate_cache
-async def delete_order(
-    session: AsyncSession, order: Orders, user: User = Depends(get_current_user)
-) -> None:
+async def delete_order(session: AsyncSession, order: Orders) -> None:
     await session.delete(order)
     await session.commit()
 

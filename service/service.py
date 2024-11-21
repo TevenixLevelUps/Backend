@@ -13,9 +13,7 @@ from models.user import User
 async def create_service(
     session: AsyncSession,
     service_data: CreateService,
-    admin: User = Depends(get_current_admin),
 ):
-
     service = Service(
         name=service_data.name,
         description=service_data.description,
@@ -43,9 +41,7 @@ async def create_service(
 
 
 @cache_red(ServiceRespon)
-async def get_service_by_id(
-    session: AsyncSession, service_id: int, user: User = Depends(get_current_user)
-):
+async def get_service_by_id(session: AsyncSession, service_id: int):
     result = await session.get(Service, service_id)
     if not result:
         raise HTTPException(
@@ -67,9 +63,8 @@ async def get_service_by_id(
 
 @cache_red(ServiceRespon)
 async def get_all_services(
-    session: AsyncSession, user: User = Depends(get_current_user)
+    session: AsyncSession,
 ):
-
     result = await session.execute(select(Service))
     services = result.scalars().all()
 
@@ -91,9 +86,7 @@ async def update_service(
     session: AsyncSession,
     service_id: int,
     service_data: CreateService,
-    admin: User = Depends(get_current_admin),
 ):
-
     service = await session.get(Service, service_id)
     if not service:
         raise HTTPException(
@@ -124,9 +117,9 @@ async def update_service(
 
 @invalidate_cache
 async def delete_service(
-    session: AsyncSession, service_id: int, admin: User = Depends(get_current_admin)
+    session: AsyncSession,
+    service_id: int,
 ):
-
     service = await session.get(Service, service_id)
     if not service:
         raise HTTPException(

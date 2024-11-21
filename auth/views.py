@@ -2,7 +2,9 @@ from fastapi import APIRouter, Depends
 from sqlalchemy.ext.asyncio import AsyncSession
 from .shemas import UserCreate, UserLogin, Token
 from database.db_helper import db_helper
-from .service import register_user, confirm_user_email, login_user, simple_login_user
+from .service import register_user, confirm_user_email, login_user
+from models.user import User
+from .dependencies import get_current_user
 
 router = APIRouter()
 
@@ -32,9 +34,8 @@ async def login(
     return await login_user(user, session)
 
 
-@router.post("/simple_login", response_model=Token)
-async def simple_login(
-    user: UserLogin,
-    session: AsyncSession = Depends(db_helper.scoped_session_dependency),
-):  # Исправлено на AsyncSession и вызов scoped_session_dependency
-    return await simple_login_user(user, session)
+@router.get(
+    "/me",
+)
+async def read_users_me(current_user: User = Depends(get_current_user)):
+    return current_user

@@ -1,10 +1,11 @@
 from fastapi import APIRouter, Depends, File, UploadFile
 from sqlalchemy.ext.asyncio import AsyncSession
 from starlette import status
-
+from models.user import User
 from database.db_helper import db_helper
 from . import service
 from .shema import CreateService, ServiceRespon
+from auth.dependencies import get_current_user, get_current_admin
 
 router = APIRouter(tags=["service"])
 
@@ -19,6 +20,7 @@ async def create_service(
     execution_time: str,
     image: UploadFile = File(...),
     session: AsyncSession = Depends(db_helper.scoped_session_dependency),
+    admin: User = Depends(get_current_admin),
 ):
 
     image_bytes = await image.read()
@@ -38,6 +40,7 @@ async def create_service(
 async def get_service(
     service_id: int,
     session: AsyncSession = Depends(db_helper.scoped_session_dependency),
+    user: User = Depends(get_current_user),
 ):
     return await service.get_service_by_id(session=session, service_id=service_id)
 
@@ -45,6 +48,7 @@ async def get_service(
 @router.get("/services/", response_model=list[ServiceRespon])
 async def get_all_services(
     session: AsyncSession = Depends(db_helper.scoped_session_dependency),
+    user: User = Depends(get_current_user),
 ):
     return await service.get_all_services(session=session)
 
@@ -58,6 +62,7 @@ async def update_service(
     execution_time: str,
     image: UploadFile = File(None),  # Поле может быть пустым
     session: AsyncSession = Depends(db_helper.scoped_session_dependency),
+    admin: User = Depends(get_current_admin),
 ):
 
     image_bytes = await (image.read() if image else None)
@@ -79,5 +84,6 @@ async def update_service(
 async def delete_service(
     service_id: int,
     session: AsyncSession = Depends(db_helper.scoped_session_dependency),
+    admin: User = Depends(get_current_admin),
 ):
     await service.delete_service(session=session, service_id=service_id)
