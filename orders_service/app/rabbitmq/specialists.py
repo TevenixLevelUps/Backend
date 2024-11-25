@@ -5,8 +5,8 @@ import aio_pika
 from aio_pika.abc import AbstractChannel
 from fastapi import HTTPException
 
-from app.rabbit import get_rabbit_connection
 from app.logger import logger
+from app.rabbit import get_rabbit_connection
 
 
 class SpecialistsRabbit:

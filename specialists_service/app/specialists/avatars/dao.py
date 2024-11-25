@@ -8,8 +8,8 @@ from app.dao.base import BaseDAO
 from app.exceptions import (AvatarForThisSpecialistAlreadyExistsException,
                             NoSuchSpecialistAvatarException, NotImageException)
 from app.specialists.avatars.models import SpecialistAvatars
-from app.specialists.dao import SpecialistsDAO
 from app.specialists.avatars.schemas import SSpecialistAvatar
+from app.specialists.dao import SpecialistsDAO
 
 
 class SpecialistAvatarsDAO(BaseDAO):

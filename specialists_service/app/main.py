@@ -10,10 +10,10 @@ from fastapi_cache.backends.redis import RedisBackend
 
 from app.config import settings
 from app.logger import logger
+from app.rabbitmq.specialists import SpecialistsRabbit
 from app.rate_limiter import rate_limit_user, redis_client
 from app.specialists.avatars.router import router as specialist_avatars_router
 from app.specialists.router import router as specialists_router
-from app.rabbitmq.specialists import SpecialistsRabbit
 
 
 def create_app() -> FastAPI:

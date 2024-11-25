@@ -1,11 +1,12 @@
 import json
+
 import aio_pika
 from aio_pika.abc import AbstractChannel
 
-from app.logger import logger
-from app.services.dao import ServicesDAO
 from app.database import async_session_maker
+from app.logger import logger
 from app.rabbit import get_rabbit_connection
+from app.services.dao import ServicesDAO
 
 
 class ServicesRabbit:

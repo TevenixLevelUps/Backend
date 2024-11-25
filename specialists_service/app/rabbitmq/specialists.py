@@ -1,12 +1,13 @@
 import json
+
 import aio_pika
 from aio_pika.abc import AbstractChannel
 
-from app.logger import logger
-from app.specialists.dao import SpecialistsDAO
 from app.database import async_session_maker
-from app.rabbit import get_rabbit_connection
 from app.exceptions import NoSuchSpecialistException
+from app.logger import logger
+from app.rabbit import get_rabbit_connection
+from app.specialists.dao import SpecialistsDAO
 
 
 class SpecialistsRabbit:

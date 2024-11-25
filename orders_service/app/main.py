@@ -10,8 +10,8 @@ from fastapi_cache.backends.redis import RedisBackend
 from app.config import settings
 from app.logger import logger
 from app.orders.router import router as orders_router
-from app.rate_limiter import rate_limit_user, redis_client
 from app.rabbit import get_rabbit_connection
+from app.rate_limiter import rate_limit_user, redis_client
 
 
 def create_app() -> FastAPI:

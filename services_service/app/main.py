@@ -10,10 +10,10 @@ from fastapi_cache.backends.redis import RedisBackend
 
 from app.config import settings
 from app.logger import logger
+from app.rabbitmq.services import ServicesRabbit
 from app.rate_limiter import rate_limit_user, redis_client
 from app.services.router import router as services_router
 from app.services.service_images.router import router as service_images_router
-from app.rabbitmq.services import ServicesRabbit
 
 
 def create_app() -> FastAPI:
