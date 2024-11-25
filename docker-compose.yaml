@@ -1,0 +1,22 @@
+services:
+  rabbitmq:
+    image: rabbitmq:3-management-alpine
+    hostname: localhost
+    container_name: rabbitmq
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+    environment:
+      RABBITMQ_DEFAULT_USER: ${APP_CONFIG__RABBIT__USER}
+      RABBITMQ_DEFAULT_PASS: ${APP_CONFIG__RABBIT__PASSWORD}
+    volumes:
+      - rabbitmq-data:/var/lib/rabbitmq
+    networks:
+      - backend
+
+volumes:
+  rabbitmq-data:
+
+networks:
+  backend:
+    external: true
