@@ -29,18 +29,24 @@ class ServicesRabbit:
             service_id: str,
             channel: AbstractChannel,
         ) -> None:
-        async with async_session_maker() as session:
-            service = await ServicesDAO.find_one_or_none(session, id=service_id)
-            await session.commit()
+        try:
+            async with async_session_maker() as session:
+                service = await ServicesDAO.find_one_or_none(session, id=service_id)
+                await session.commit()
 
-        body = {
-            "id": str(service.id),
-            "title": service.title,
-            "description": service.description,
-            "price": float(service.price),
-            "lead_time": service.lead_time.strftime("%H:%M:%S"),
-            "image_id": service.image_id
-        }
+            body = {
+                "id": str(service.id),
+                "title": service.title,
+                "description": service.description,
+                "price": float(service.price),
+                "lead_time": service.lead_time.strftime("%H:%M:%S"),
+                "image_id": service.image_id
+            }
+        except Exception as e:
+            body = {
+                "status_code": e.status_code,
+                "detail": e.detail,
+            }
 
         await channel.default_exchange.publish(
             aio_pika.Message(body=json.dumps(body).encode()),

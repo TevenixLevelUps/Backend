@@ -37,6 +37,12 @@ class ServicesRabbit:
 
                     logger.info(f"Received message: {service}")
 
+                    if service.get("status_code"):
+                        raise HTTPException(
+                            status_code=service.get("status_code"),
+                            detail=service.get("detail"),
+                        )
+
                     return service
 
     @classmethod

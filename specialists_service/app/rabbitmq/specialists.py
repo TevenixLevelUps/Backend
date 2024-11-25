@@ -71,17 +71,23 @@ class SpecialistsRabbit:
             specialist_id: str,
             channel: AbstractChannel,
         ) -> None:
-        async with async_session_maker() as session:
-            specialist = await SpecialistsDAO.find_one_or_none(session, id=specialist_id)
-            await session.commit()
+        try:
+            async with async_session_maker() as session:
+                specialist = await SpecialistsDAO.find_one_or_none(session, id=specialist_id)
+                await session.commit()
 
-        body = {
-            "id": str(specialist.id),
-            "name": specialist.name,
-            "avatar_id": specialist.avatar_id,
-        }
-
+            body = {
+                "id": str(specialist.id),
+                "name": specialist.name,
+                "avatar_id": specialist.avatar_id,
+            }
+        except Exception as e:
+            body = {
+                "status_code": e.status_code,
+                "detail": e.detail,
+            }
+        
         await channel.default_exchange.publish(
             aio_pika.Message(body=json.dumps(body).encode()),
             routing_key="response_specialist_by_id"
-        )
+        ) 

@@ -36,11 +36,13 @@ class SpecialistsRabbit:
                     specialist = json.loads(message.body)
 
                     logger.info(f"Received message: {specialist}")
+
                     if specialist.get("status_code"):
                         raise HTTPException(
                             status_code=specialist.get("status_code"),
                             detail=specialist.get("detail"),
                         )
+                    
                     return specialist
 
     @classmethod
@@ -69,5 +71,12 @@ class SpecialistsRabbit:
                     specialist = json.loads(message.body)
 
                     logger.info(f"Received message: {specialist}")
+
+                    if specialist.get("status_code"):
+                        raise HTTPException(
+                            status_code=specialist.get("status_code"),
+                            detail=specialist.get("detail"),
+                        )
+
 
                     return specialist
