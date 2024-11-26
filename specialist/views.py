@@ -1,13 +1,14 @@
-from fastapi import APIRouter, Depends, UploadFile, File, Form
+from fastapi import APIRouter, Depends, File, Form, UploadFile
 from sqlalchemy.ext.asyncio import AsyncSession
 from starlette import status
 
-from database.db_helper import db_helper
-from . import service
-from models.user import User
-from .dependencies import get_specialist_by_id
-from .shema import CreateSpecialist, UpdateSpecialist, SpecialistRespon
 from auth.dependencies import get_current_admin, get_current_user
+from database.db_helper import db_helper
+from models.user import User
+
+from . import service
+from .dependencies import get_specialist_by_id
+from .shema import CreateSpecialist, SpecialistRespon, UpdateSpecialist
 
 router = APIRouter(tags=["specialist"])
 

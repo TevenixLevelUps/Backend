@@ -1,14 +1,15 @@
 import base64
 
-from fastapi import status, HTTPException, Depends
+from fastapi import Depends, HTTPException, status
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.future import select
 
-from models.specialist import Specialist
-from .shema import CreateSpecialist, UpdateSpecialist, SpecialistRespon
-from database import cache_red, invalidate_cache
-from models.user import User
 from auth.dependencies import get_current_admin, get_current_user
+from database import cache_red, invalidate_cache
+from models.specialist import Specialist
+from models.user import User
+
+from .shema import CreateSpecialist, SpecialistRespon, UpdateSpecialist
 
 
 @invalidate_cache

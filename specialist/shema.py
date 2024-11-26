@@ -1,5 +1,6 @@
+from typing import Any, Optional
+
 from pydantic import BaseModel, ConfigDict
-from typing import Optional, Any
 
 
 class BaseSpecialist(BaseModel):

@@ -1,7 +1,8 @@
-from .base import Base
 from typing import TYPE_CHECKING
+
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
+from .base import Base
 
 if TYPE_CHECKING:
     from .token import Token

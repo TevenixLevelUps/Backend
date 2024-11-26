@@ -1,9 +1,10 @@
 from typing import TYPE_CHECKING
 
-from sqlalchemy.types import LargeBinary
-from sqlalchemy.orm import Mapped, mapped_column, relationship
-from .base import Base
 from sqlalchemy import String
+from sqlalchemy.orm import Mapped, mapped_column, relationship
+from sqlalchemy.types import LargeBinary
+
+from .base import Base
 
 if TYPE_CHECKING:
     from .orders import Orders

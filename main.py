@@ -1,14 +1,15 @@
 from contextlib import asynccontextmanager
 
-from fastapi import FastAPI, Request, Response
 import uvicorn
+from fastapi import FastAPI, Request, Response
+
+from auth.views import router as auth_router
+from database import rate_limit
+from database.db_helper import db_helper
+from models.base import Base
 from Orders.views import router as orders_router
 from service.views import router as services_router
 from specialist.views import router as specialist_router
-from auth.views import router as auth_router
-from database.db_helper import db_helper
-from models.base import Base
-from database import rate_limit
 
 
 @asynccontextmanager

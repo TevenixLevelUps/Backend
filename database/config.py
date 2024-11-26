@@ -1,11 +1,9 @@
+import os
 from pathlib import Path
 
-from pydantic import BaseModel
-
-from pydantic_settings import BaseSettings
-
 from dotenv import load_dotenv
-import os
+from pydantic import BaseModel
+from pydantic_settings import BaseSettings
 
 load_dotenv()
 

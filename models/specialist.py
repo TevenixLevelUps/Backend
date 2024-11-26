@@ -3,6 +3,7 @@ from typing import TYPE_CHECKING
 from sqlalchemy import String
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 from sqlalchemy.types import LargeBinary
+
 from .base import Base
 
 if TYPE_CHECKING:

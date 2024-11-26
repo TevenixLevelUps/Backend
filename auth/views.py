@@ -1,10 +1,12 @@
 from fastapi import APIRouter, Depends, Response
 from sqlalchemy.ext.asyncio import AsyncSession
-from .shemas import UserCreate, UserLogin
+
 from database.db_helper import db_helper
-from .service import register_user, confirm_user_email, login_user
 from models.user import User
+
 from .dependencies import get_current_user
+from .service import confirm_user_email, login_user, register_user
+from .shemas import UserCreate, UserLogin
 
 router = APIRouter()
 

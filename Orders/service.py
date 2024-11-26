@@ -1,17 +1,17 @@
-from datetime import datetime
-from datetime import timedelta
-
+from datetime import datetime, timedelta
 from typing import List
 
-from fastapi import status, HTTPException, Depends
-from sqlalchemy import Select, or_, and_
+from fastapi import Depends, HTTPException, status
+from sqlalchemy import Select, and_, or_
 from sqlalchemy.ext.asyncio import AsyncSession
 
+from database import cache_red, invalidate_cache
 from models.orders import Orders
 from models.service import Service
 from models.specialist import Specialist
-from .shema import CreateOrder, Order as pydOrder
-from database import cache_red, invalidate_cache
+
+from .shema import CreateOrder
+from .shema import Order as pydOrder
 
 
 @invalidate_cache

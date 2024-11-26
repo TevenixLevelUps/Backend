@@ -1,13 +1,16 @@
-import uuid
 import smtplib
+import uuid
 from email.mime.text import MIMEText
-from fastapi import HTTPException, status, Response
+
+from fastapi import HTTPException, Response, status
+from passlib.context import CryptContext
 from sqlalchemy import Select
 from sqlalchemy.ext.asyncio import AsyncSession
-from passlib.context import CryptContext
-from . import jwt
-from .shemas import UserLogin, UserCreate
+
 from models.user import User
+
+from . import jwt
+from .shemas import UserCreate, UserLogin
 
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 

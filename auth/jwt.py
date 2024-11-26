@@ -1,14 +1,16 @@
+import logging
 from datetime import datetime, timedelta
 from zoneinfo import ZoneInfo
 
 import jwt
-from .shemas import TokenData
-from .utils import get_private_key, get_public_key, get_algorithm
+from fastapi import HTTPException, status
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.future import select
-from fastapi import HTTPException, status
+
 from models.token import Token
-import logging
+
+from .shemas import TokenData
+from .utils import get_algorithm, get_private_key, get_public_key
 
 timezone = ZoneInfo("Europe/Moscow")
 

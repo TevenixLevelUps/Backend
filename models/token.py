@@ -1,8 +1,10 @@
+from datetime import datetime, timedelta
 from typing import TYPE_CHECKING
+
 from sqlalchemy import ForeignKey
 from sqlalchemy.orm import Mapped, mapped_column, relationship
+
 from .base import Base
-from datetime import datetime, timedelta
 
 ACCESS_TOKEN_EXPIRE_MINUTES = 30
 

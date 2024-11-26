@@ -1,8 +1,9 @@
-import time
-from fastapi import Request, HTTPException, status
-from redis.asyncio import Redis
-from dotenv import load_dotenv
 import os
+import time
+
+from dotenv import load_dotenv
+from fastapi import HTTPException, Request, status
+from redis.asyncio import Redis
 
 load_dotenv()
 
