@@ -1,5 +1,6 @@
-from fastapi import APIRouter, Depends, Response
+from fastapi import APIRouter, Depends, Response, Form
 from sqlalchemy.ext.asyncio import AsyncSession
+from typing import Annotated
 
 from database.db_helper import db_helper
 from models.user import User
@@ -21,8 +22,8 @@ async def register(
 
 @router.post("/confirm_email")
 async def confirm_email(
-    email: str,
-    code: str,
+    email: Annotated[str, Form()],
+    code: Annotated[str, Form()],
     session: AsyncSession = Depends(db_helper.scoped_session_dependency),
 ):
     return await confirm_user_email(email, code, session)
@@ -30,10 +31,12 @@ async def confirm_email(
 
 @router.post("/login")
 async def login(
-    user: UserLogin,
+    email: Annotated[str, Form()],
+    password: Annotated[str, Form()],
     response: Response,
     session: AsyncSession = Depends(db_helper.scoped_session_dependency),
 ):
+    user = UserLogin(email=email, password=password)
     return await login_user(user, session, response)
 
 
