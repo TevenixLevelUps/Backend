@@ -18,3 +18,4 @@ class Token(BaseModel):
 
 class TokenData(BaseModel):
     email: str | None = None
+    user_id: int | None = None  # Добавьте user_id для связи с токеном

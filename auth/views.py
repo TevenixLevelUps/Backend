@@ -1,6 +1,6 @@
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter, Depends, Response
 from sqlalchemy.ext.asyncio import AsyncSession
-from .shemas import UserCreate, UserLogin, Token
+from .shemas import UserCreate, UserLogin
 from database.db_helper import db_helper
 from .service import register_user, confirm_user_email, login_user
 from models.user import User
@@ -13,7 +13,7 @@ router = APIRouter()
 async def register(
     user: UserCreate,
     session: AsyncSession = Depends(db_helper.scoped_session_dependency),
-):  # Исправлено на AsyncSession и вызов scoped_session_dependency
+):
     return await register_user(user, session)
 
 
@@ -22,20 +22,19 @@ async def confirm_email(
     email: str,
     code: str,
     session: AsyncSession = Depends(db_helper.scoped_session_dependency),
-):  # Исправлено на AsyncSession и вызов scoped_session_dependency
+):
     return await confirm_user_email(email, code, session)
 
 
 @router.post("/login")
 async def login(
     user: UserLogin,
+    response: Response,
     session: AsyncSession = Depends(db_helper.scoped_session_dependency),
-):  # Исправлено на AsyncSession и вызов scoped_session_dependency
-    return await login_user(user, session)
+):
+    return await login_user(user, session, response)
 
 
-@router.get(
-    "/me",
-)
+@router.get("/me")
 async def read_users_me(current_user: User = Depends(get_current_user)):
     return current_user

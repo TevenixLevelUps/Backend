@@ -5,11 +5,13 @@ load_dotenv()
 
 
 def get_private_key():
-    return os.getenv("PRIVATE_KEY")
+    with open("jwt-private.pem", "r") as f:
+        return f.read()
 
 
 def get_public_key():
-    return os.getenv("PUBLIC_KEY")
+    with open("jwt-public.pem", "r") as f:
+        return f.read()
 
 
 def get_algorithm():

@@ -1,18 +1,17 @@
-from fastapi import Depends, HTTPException, status
+from fastapi import Depends, HTTPException, status, Cookie
 from fastapi.security import OAuth2PasswordBearer
-from sqlalchemy.ext.asyncio import (
-    AsyncSession,
-)  # Обновлено для использования AsyncSession
+from sqlalchemy.ext.asyncio import AsyncSession
 from . import jwt
 from database.db_helper import db_helper
 from sqlalchemy import Select
 from models.user import User
+from .shemas import TokenData
 
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token")
 
 
 async def get_current_user(
-    token: str = Depends(oauth2_scheme),
+    access_token: str = Cookie(None),
     session: AsyncSession = Depends(db_helper.scoped_session_dependency),
 ):
     credentials_exception = HTTPException(
@@ -20,12 +19,23 @@ async def get_current_user(
         detail="Could not validate credentials",
         headers={"WWW-Authenticate": "Bearer"},
     )
-    token_data = jwt.verify_token(token, credentials_exception)
-    stmt = Select(User).where(User.email == token_data.email)
+
+    if access_token is None:
+        raise credentials_exception
+
+    token_data: TokenData = await jwt.verify_token(
+        access_token, credentials_exception, session
+    )
+
+    stmt = Select(User).where(User.id == 3)
     result = await session.execute(stmt)
     user = result.scalars().first()
+
+    # user ={"User":"OK"}
+
     if user is None:
         raise credentials_exception
+
     return user
 
 
