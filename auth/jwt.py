@@ -26,17 +26,30 @@ ALGORITHM = get_algorithm()
 
 
 async def create_access_token(data: dict, session: AsyncSession):
+    user_id = data["sub"]
+    try:
+        old_tokens = await session.execute(
+            select(Token).where(Token.user_id == user_id)
+        )
+        old_token = old_tokens.scalars().first()
+        if old_token:
+            await session.delete(old_token)
+        await session.commit()
+        logger.info(f"Deleted old token for user_id {user_id}")
+    except Exception as e:
+        (logger.error(f"Error deleting old token for user_id {user_id}: {e}"))
+
     to_encode = data.copy()
     expire = datetime.now() + timedelta(minutes=30)
     to_encode.update({"exp": expire})
-    to_encode["sub"] = str(to_encode["sub"])  # Преобразование user_id в строку
+    to_encode["sub"] = str(user_id)  # Преобразование user_id в строку
     private_key = get_private_key()
     encoded_jwt = jwt.encode(to_encode, private_key, algorithm=ALGORITHM)
     db_token = Token(
         access_token=encoded_jwt,
         token_type="bearer",
         expiry_time=expire,
-        user_id=int(to_encode["sub"]),
+        user_id=user_id,
     )
     session.add(db_token)
     await session.commit()
