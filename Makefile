@@ -70,3 +70,28 @@ specialists-logs:
 .PHONY: orders-logs
 orders-logs:
 	${LOGS} ${ORDERS_CONTAINER} -f
+
+.PHONY: test-services
+test-services:
+	${EXEC} ${SERVICES_CONTAINER} pytest $(path)
+
+.PHONY: test-specialists
+test-specialists:
+	${EXEC} ${SPECIALISTS_CONTAINER} pytest $(path)
+
+.PHONY: test-orders
+test-orders:
+	${EXEC} ${ORDERS_CONTAINER} pytest $(path)
+
+.PHONY: test-cov-services
+test-cov-services:
+	${EXEC} ${SERVICES_CONTAINER} pytest --cov=$(path)
+
+.PHONY: test-cov-specialists
+test-cov-specialists:
+	${EXEC} ${SPECIALISTS_CONTAINER} pytest --cov=$(path)
+
+.PHONY: test-cov-orders
+test-cov-orders:
+	${EXEC} ${ORDERS_CONTAINER} pytest --cov=$(path)
+
