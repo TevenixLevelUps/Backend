@@ -3,13 +3,16 @@ import uuid
 from email.mime.text import MIMEText
 
 from fastapi import HTTPException, Response, status
+from fastapi.params import Depends
 from passlib.context import CryptContext
 from sqlalchemy import Select
 from sqlalchemy.ext.asyncio import AsyncSession
 
+from models import Token
 from models.user import User
 
 from . import jwt
+from .dependencies import get_current_user
 from .shemas import UserCreate, UserLogin
 
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
@@ -106,4 +109,35 @@ async def login_user(user: UserLogin, session: AsyncSession, response: Response)
     # Установка токена в куки
     response.set_cookie(key="access_token", value=access_token, httponly=True)
 
+    response.headers["Authorization"] = f"Bearer {access_token}"
+
     return {"message": "Logged in successfully"}
+
+
+async def logout_user(session: AsyncSession, response: Response, user: User):
+
+    if user is None:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Not logged in",
+        )
+
+    stmt = Select(Token).where(Token.user_id == user.id)
+    result = await session.execute(stmt)
+    db_token = result.scalars().first()
+
+    if db_token:
+        await session.delete(db_token)
+        await session.commit()
+
+    else:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Token not found",
+        )
+
+    response.delete_cookie(key="access_token")
+
+    return {
+        "message": "Logged out successfully",
+    }

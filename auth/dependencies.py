@@ -1,4 +1,4 @@
-from fastapi import Cookie, Depends, HTTPException, status
+from fastapi import Cookie, Depends, Header, HTTPException, status
 from fastapi.security import OAuth2PasswordBearer
 from sqlalchemy import Select
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -13,7 +13,8 @@ oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token")
 
 
 async def get_current_user(
-    access_token: str = Cookie(None),
+    authorization: str = Header(None),  # Заголовок Authorization
+    access_token: str = Cookie(None),  # Токен из cookie
     session: AsyncSession = Depends(db_helper.scoped_session_dependency),
 ):
     credentials_exception = HTTPException(
@@ -22,18 +23,22 @@ async def get_current_user(
         headers={"WWW-Authenticate": "Bearer"},
     )
 
-    if access_token is None:
+    token = None
+    if authorization and authorization.startswith("Bearer "):
+        token = authorization.split(" ")[1]
+    elif access_token:
+        token = access_token
+
+    if not token:
         raise credentials_exception
 
     token_data: TokenData = await jwt.verify_token(
-        access_token, credentials_exception, session
+        token, credentials_exception, session
     )
 
-    stmt = Select(User).where(User.id == 3)
+    stmt = Select(User).where(User.id == token_data.user_id)
     result = await session.execute(stmt)
     user = result.scalars().first()
-
-    # user ={"User":"OK"}
 
     if user is None:
         raise credentials_exception

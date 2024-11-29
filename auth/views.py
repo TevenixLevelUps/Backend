@@ -1,12 +1,13 @@
-from fastapi import APIRouter, Depends, Response, Form
-from sqlalchemy.ext.asyncio import AsyncSession
 from typing import Annotated
+
+from fastapi import APIRouter, Depends, Form, Response
+from sqlalchemy.ext.asyncio import AsyncSession
 
 from database.db_helper import db_helper
 from models.user import User
 
+from . import service
 from .dependencies import get_current_user
-from .service import confirm_user_email, login_user, register_user
 from .shemas import UserCreate, UserLogin
 
 router = APIRouter()
@@ -17,7 +18,7 @@ async def register(
     user: UserCreate,
     session: AsyncSession = Depends(db_helper.scoped_session_dependency),
 ):
-    return await register_user(user, session)
+    return await service.register_user(user, session)
 
 
 @router.post("/confirm_email")
@@ -26,7 +27,7 @@ async def confirm_email(
     code: Annotated[str, Form()],
     session: AsyncSession = Depends(db_helper.scoped_session_dependency),
 ):
-    return await confirm_user_email(email, code, session)
+    return await service.confirm_user_email(email, code, session)
 
 
 @router.post("/login")
@@ -37,7 +38,16 @@ async def login(
     session: AsyncSession = Depends(db_helper.scoped_session_dependency),
 ):
     user = UserLogin(email=email, password=password)
-    return await login_user(user, session, response)
+    return await service.login_user(user, session, response)
+
+
+@router.post("/log_out")
+async def logout(
+    response: Response,
+    session: AsyncSession = Depends(db_helper.scoped_session_dependency),
+    user: User = Depends(get_current_user),
+):
+    return await service.logout_user(session=session, user=user, response=response)
 
 
 @router.get("/me")

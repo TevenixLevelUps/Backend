@@ -14,7 +14,7 @@ from .utils import get_algorithm, get_private_key, get_public_key
 
 timezone = ZoneInfo("Europe/Moscow")
 
-# Настройка логирования
+
 logging.basicConfig(
     level=logging.INFO,
     format="%(asctime)s [%(levelname)s] %(message)s",
