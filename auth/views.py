@@ -1,6 +1,6 @@
 from typing import Annotated
 
-from fastapi import APIRouter, Depends, Form, Response
+from fastapi import APIRouter, Depends, Form, Response, status
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from database.db_helper import db_helper
@@ -13,7 +13,7 @@ from .shemas import UserCreate, UserLogin
 router = APIRouter()
 
 
-@router.post("/register")
+@router.post("/register", status_code=status.HTTP_201_CREATED)
 async def register(
     user: UserCreate,
     session: AsyncSession = Depends(db_helper.scoped_session_dependency),
@@ -21,7 +21,7 @@ async def register(
     return await service.register_user(user, session)
 
 
-@router.post("/confirm_email")
+@router.post("/confirm_email", status_code=status.HTTP_200_OK)
 async def confirm_email(
     email: Annotated[str, Form()],
     code: Annotated[str, Form()],
@@ -30,7 +30,7 @@ async def confirm_email(
     return await service.confirm_user_email(email, code, session)
 
 
-@router.post("/login")
+@router.post("/login", status_code=status.HTTP_200_OK)
 async def login(
     email: Annotated[str, Form()],
     password: Annotated[str, Form()],
@@ -50,6 +50,6 @@ async def logout(
     return await service.logout_user(session=session, user=user, response=response)
 
 
-@router.get("/me")
+@router.get("/me", status_code=status.HTTP_200_OK)
 async def read_users_me(current_user: User = Depends(get_current_user)):
     return current_user

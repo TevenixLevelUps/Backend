@@ -7,6 +7,7 @@ from fastapi import HTTPException, status
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.future import select
 
+from database.logging_conf import configure_logging
 from models.token import Token
 
 from .shemas import TokenData
@@ -15,12 +16,7 @@ from .utils import get_algorithm, get_private_key, get_public_key
 timezone = ZoneInfo("Europe/Moscow")
 
 
-logging.basicConfig(
-    level=logging.INFO,
-    format="%(asctime)s [%(levelname)s] %(message)s",
-    handlers=[logging.FileHandler("app.log"), logging.StreamHandler()],
-)
-logger = logging.getLogger(__name__)
+logger = configure_logging(logging.INFO)
 
 ALGORITHM = get_algorithm()
 
