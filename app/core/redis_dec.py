@@ -1,7 +1,7 @@
 import json
 from functools import wraps
 
-from .redis_config import redis_client
+from app.database.redis_config import redis_client
 
 
 def cache_red(model_class, expiry: int = 660):
@@ -12,7 +12,7 @@ def cache_red(model_class, expiry: int = 660):
             cached_data = await redis_client.get(cache_key)
 
             if cached_data:
-                result_data = await json.loads(cached_data)
+                result_data = json.loads(cached_data)
 
                 if isinstance(result_data, list):
                     return [model_class(**item) for item in result_data]

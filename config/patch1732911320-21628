@@ -1,0 +1,59 @@
+diff --git a/alembic/env.py b/alembic/env.py
+index 6c9b196..12a960d 100644
+--- a/alembic/env.py
++++ b/alembic/env.py
+@@ -17,6 +17,7 @@ if config.config_file_name is not None:
+     fileConfig(config.config_file_name)
+ 
+ from app.database import settings
++
+ # add your model's MetaData object here
+ # for 'autogenerate' support
+ # from myapp import mymodel
+diff --git a/app/database/db_helper.py b/app/database/db_helper.py
+index 6ba76ac..475c66e 100644
+--- a/app/database/db_helper.py
++++ b/app/database/db_helper.py
+@@ -1,7 +1,11 @@
+ from asyncio import current_task
+ 
+-from sqlalchemy.ext.asyncio import (AsyncSession, async_scoped_session,
+-                                    async_sessionmaker, create_async_engine)
++from sqlalchemy.ext.asyncio import (
++    AsyncSession,
++    async_scoped_session,
++    async_sessionmaker,
++    create_async_engine,
++)
+ 
+ from app.database.config import settings
+ 
+diff --git a/app/models/base.py b/app/models/base.py
+index 6c5bdf2..e8a085a 100644
+--- a/app/models/base.py
++++ b/app/models/base.py
+@@ -1,5 +1,4 @@
+-from sqlalchemy.orm import (DeclarativeBase, Mapped, declared_attr,
+-                            mapped_column)
++from sqlalchemy.orm import DeclarativeBase, Mapped, declared_attr, mapped_column
+ 
+ 
+ class Base(DeclarativeBase):
+diff --git a/config/.pre-commit-config.yaml b/config/.pre-commit-config.yaml
+deleted file mode 100644
+index 63f80e0..0000000
+--- a/config/.pre-commit-config.yaml
++++ /dev/null
+@@ -1,8 +0,0 @@
+-repos:
+-  - repo: local
+-    hooks:
+-      - id: black
+-        name: Black
+-        entry: poetry run black
+-        language: system
+-        types: [python]
+\ No newline at end of file
+diff --git a/config/__init__.py b/config/__init__.py
+deleted file mode 100644
+index e69de29..0000000

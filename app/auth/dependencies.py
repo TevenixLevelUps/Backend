@@ -3,8 +3,8 @@ from fastapi.security import OAuth2PasswordBearer
 from sqlalchemy import Select
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from database.db_helper import db_helper
-from models.user import User
+from app.database.db_helper import db_helper
+from app.models.user import User
 
 from . import jwt
 from .shemas import TokenData

@@ -3,16 +3,14 @@ import uuid
 from email.mime.text import MIMEText
 
 from fastapi import HTTPException, Response, status
-from fastapi.params import Depends
 from passlib.context import CryptContext
 from sqlalchemy import Select
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from models import Token
-from models.user import User
+from app.models import Token
+from app.models.user import User
 
 from . import jwt
-from .dependencies import get_current_user
 from .shemas import UserCreate, UserLogin
 
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")

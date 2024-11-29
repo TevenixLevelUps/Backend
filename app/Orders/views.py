@@ -1,16 +1,14 @@
-from typing import List
-
 from fastapi import APIRouter, Depends
 from sqlalchemy.ext.asyncio import AsyncSession
 from starlette import status
 
-from auth.dependencies import get_current_admin, get_current_user
-from database.db_helper import db_helper
-from models import User
+from app.auth import get_current_user
+from app.database import db_helper
+from app.models import User
 
 from . import service
 from .dependencies import get_order_by_id
-from .shema import CreateOrder, Order
+from .shema import CreateOrder
 
 router = APIRouter(tags=["Orders"])
 

@@ -1,14 +1,14 @@
 from datetime import datetime, timedelta
 from typing import List
 
-from fastapi import Depends, HTTPException, status
+from fastapi import HTTPException, status
 from sqlalchemy import Select, and_, or_
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from database import cache_red, invalidate_cache
-from models.orders import Orders
-from models.service import Service
-from models.specialist import Specialist
+from app.core.redis_dec import cache_red, invalidate_cache
+from app.models.orders import Orders
+from app.models.service import Service
+from app.models.specialist import Specialist
 
 from .shema import CreateOrder
 from .shema import Order as pydOrder

@@ -15,7 +15,7 @@ def configure_logging(level: int):
     logger.addHandler(console_handler)
 
     # Лог в файл
-    file_handler = logging.FileHandler("../app.log")
+    file_handler = logging.FileHandler("../../app.log")
     file_handler.setFormatter(formatter)
     logger.addHandler(file_handler)
 

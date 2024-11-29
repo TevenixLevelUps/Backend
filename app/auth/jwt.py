@@ -7,8 +7,8 @@ from fastapi import HTTPException, status
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.future import select
 
-from database.logging_conf import configure_logging
-from models.token import Token
+from app.core.logging_conf import configure_logging
+from app.models.token import Token
 
 from .shemas import TokenData
 from .utils import get_algorithm, get_private_key, get_public_key

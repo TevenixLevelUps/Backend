@@ -4,7 +4,7 @@ from typing import Annotated
 from fastapi import Depends, HTTPException, status
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from database.db_helper import db_helper
+from app.database import db_helper
 
 from .service import get_order
 from .shema import Order
