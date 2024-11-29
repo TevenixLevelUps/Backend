@@ -13,8 +13,8 @@ oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token")
 
 
 async def get_current_user(
-    authorization: str = Header(None),  # Заголовок Authorization
-    access_token: str = Cookie(None),  # Токен из cookie
+    authorization: str = Header(None),
+    access_token: str = Cookie(None),
     session: AsyncSession = Depends(db_helper.scoped_session_dependency),
 ):
     credentials_exception = HTTPException(
