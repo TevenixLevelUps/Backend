@@ -9,6 +9,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.models import Token
 from app.models.user import User
+from app.notifications import send_email
 
 from . import jwt
 from .shemas import UserCreate, UserLogin
@@ -20,20 +21,20 @@ def generate_confirmation_code():
     return str(uuid.uuid4())
 
 
-def send_confirmation_email(email: str, confirmation_code: str):
-    smtp_server = "smtp.gmail.com"
-    smtp_port = 587
-    smtp_username = "pilevichdima20@gmail.com"
-    smtp_password = "sxpq qwcy kffq zotu"
-    message = MIMEText(f"Your confirmation code is {confirmation_code}")
-    message["Subject"] = "Email Confirmation"
-    message["From"] = smtp_username
-    message["To"] = email
-
-    with smtplib.SMTP(smtp_server, smtp_port) as server:
-        server.starttls()
-        server.login(smtp_username, smtp_password)
-        server.sendmail(smtp_username, [email], message.as_string())
+# def send_confirmation_email(email: str, confirmation_code: str):
+#     smtp_server = "smtp.gmail.com"
+#     smtp_port = 587
+#     smtp_username = "pilevichdima20@gmail.com"
+#     smtp_password = "sxpq qwcy kffq zotu"
+#     message = MIMEText(f"Your confirmation code is {confirmation_code}")
+#     message["Subject"] = "Email Confirmation"
+#     message["From"] = smtp_username
+#     message["To"] = email
+#
+#     with smtplib.SMTP(smtp_server, smtp_port) as server:
+#         server.starttls()
+#         server.login(smtp_username, smtp_password)
+#         server.sendmail(smtp_username, [email], message.as_string())
 
 
 async def register_user(user: UserCreate, session: AsyncSession):
@@ -49,7 +50,8 @@ async def register_user(user: UserCreate, session: AsyncSession):
 
     hashed_password = pwd_context.hash(user.password)
     confirmation_code = generate_confirmation_code()
-    send_confirmation_email(user.email, confirmation_code)
+    title: str = "Confirmation code"
+    send_email(recipients=user.email, body=str(confirmation_code), subject=title)
 
     db_user = User(
         email=user.email,
@@ -104,7 +106,9 @@ async def login_user(user: UserLogin, session: AsyncSession, response: Response)
         data={"sub": db_user.id}, session=session
     )
 
-    # Установка токена в куки
+    title: str = "LOGIN"
+    body: str = "You have successfully logged in!"
+    send_email(subject=title, body=body, recipients=user.email)
     response.set_cookie(key="access_token", value=access_token, httponly=True)
 
     response.headers["Authorization"] = f"Bearer {access_token}"
