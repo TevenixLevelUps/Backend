@@ -1,12 +1,12 @@
 import base64
 
-from fastapi import HTTPException, status
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.future import select
 
 from app.core.redis_dec import cache_red, invalidate_cache
 from app.models.specialist import Specialist
 
+from ..exceptions import SpecialistHTTPException
 from .shema import CreateSpecialist, SpecialistRespon, UpdateSpecialist
 
 
@@ -42,14 +42,10 @@ async def get_specialist(
 ) -> SpecialistRespon:
     specialist = await session.get(Specialist, specialist_id)
     if not specialist:
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND, detail="Specialist not found"
-        )
+        raise SpecialistHTTPException.specialist_not_found
 
     if specialist.avatar is None:
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND, detail="Avatar not found"
-        )
+        raise SpecialistHTTPException.avatar_not_found
 
     specialist_resp = SpecialistRespon(
         id=specialist.id,
@@ -64,7 +60,7 @@ async def get_specialist(
 @cache_red(SpecialistRespon)
 async def get_all_specialists(
     session: AsyncSession,
-) -> list[dict]:
+) -> list[SpecialistRespon]:
     result = await session.execute(select(Specialist))
     specialists = result.scalars().all()
 
@@ -90,14 +86,10 @@ async def update_specialist(
     specialist = await session.get(Specialist, specialist_id)
 
     if not specialist:
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND, detail="Specialist not found"
-        )
+        raise SpecialistHTTPException.specialist_not_found
 
     if specialist.avatar is None:
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND, detail="Avatar not found"
-        )
+        raise SpecialistHTTPException.avatar_not_found
 
     specialist.last_name = update_data.last_name
     specialist.first_name = update_data.first_name
@@ -121,9 +113,7 @@ async def delete_specialist(session: AsyncSession, specialist_id: int):
     specialist = await session.get(Specialist, specialist_id)
 
     if not specialist:
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND, detail="Specialist not found"
-        )
+        raise SpecialistHTTPException.specialist_not_found
 
     await session.delete(specialist)
     await session.commit()

@@ -10,6 +10,7 @@ from app.models.orders import Orders
 from app.models.service import Service
 from app.models.specialist import Specialist
 
+from ..exceptions import OrderHTTPException, UserHTTPException
 from .shema import CreateOrder
 from .shema import Order as pydOrder
 
@@ -29,10 +30,7 @@ async def create_order(session: AsyncSession, order_in: CreateOrder):
     specialist = specialist_result.scalars().first()
 
     if not service or not specialist:
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND,
-            detail="Service  or specialist not found",
-        )
+        raise OrderHTTPException.service_or_specialist_not_found
 
     if not await is_specialist_available(
         session=session,
@@ -40,10 +38,7 @@ async def create_order(session: AsyncSession, order_in: CreateOrder):
         order_time=fix_time,
         execution_time=service.execution_time,
     ):
-        raise HTTPException(
-            status_code=status.HTTP_403_FORBIDDEN,
-            detail="Specialist is not available at this time",
-        )
+        raise OrderHTTPException.specialist_not_available
 
     order = Orders(
         client_name=order_in.client_name,
@@ -108,5 +103,5 @@ async def is_specialist_available(
 
         return len(orders) == 0
 
-    except Exception as e:
+    except:
         return False

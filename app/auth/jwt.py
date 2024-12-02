@@ -3,13 +3,13 @@ from datetime import datetime, timedelta
 from zoneinfo import ZoneInfo
 
 import jwt
-from fastapi import HTTPException, status
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.future import select
 
 from app.core.logging_conf import configure_logging
 from app.models.token import Token
 
+from ..exceptions import TokenHTTPException
 from .shemas import TokenData
 from .utils import get_algorithm, get_private_key, get_public_key
 
@@ -38,7 +38,7 @@ async def create_access_token(data: dict, session: AsyncSession):
     to_encode = data.copy()
     expire = datetime.now() + timedelta(minutes=30)
     to_encode.update({"exp": expire})
-    to_encode["sub"] = str(user_id)  # Преобразование user_id в строку
+    to_encode["sub"] = str(user_id)
     private_key = get_private_key()
     encoded_jwt = jwt.encode(to_encode, private_key, algorithm=ALGORITHM)
     db_token = Token(
@@ -54,33 +54,6 @@ async def create_access_token(data: dict, session: AsyncSession):
 
 
 async def verify_token(token: str, credentials_exception, session: AsyncSession):
-    credentials = HTTPException(
-        status_code=status.HTTP_401_UNAUTHORIZED,
-        detail="Exception in verify_token",
-        headers={"WWW-Authenticate": "Bearer"},
-    )
-    error = HTTPException(
-        status_code=status.HTTP_400_BAD_REQUEST,
-        detail="Error in decode ",
-        headers={"WWW-Authenticate": "Bearer"},
-    )
-    error2 = HTTPException(
-        status_code=status.HTTP_404_NOT_FOUND,
-        detail="Error in db request",
-        headers={"WWW-Authenticate": "Bearer"},
-    )
-
-    error3 = HTTPException(
-        status_code=status.HTTP_404_NOT_FOUND,
-        detail="Error, token not found",
-        headers={"WWW-Authenticate": "Bearer"},
-    )
-
-    error4 = HTTPException(
-        status_code=status.HTTP_404_NOT_FOUND,
-        detail="Error, expired",
-        headers={"WWW-Authenticate": "Bearer"},
-    )
 
     try:
         public_key = get_public_key()
@@ -89,25 +62,13 @@ async def verify_token(token: str, credentials_exception, session: AsyncSession)
             logger.info(f"Decoded payload: {payload}")
         except jwt.ExpiredSignatureError as e:
             logger.error(f"Expired signature error: {e}")
-            raise HTTPException(
-                status_code=status.HTTP_401_UNAUTHORIZED,
-                detail="Token has expired",
-                headers={"WWW-Authenticate": "Bearer"},
-            )
+            raise TokenHTTPException.expired_token_error
         except jwt.DecodeError as e:
             logger.error(f"Decode error: {e}")
-            raise HTTPException(
-                status_code=status.HTTP_400_BAD_REQUEST,
-                detail="Token decode error",
-                headers={"WWW-Authenticate": "Bearer"},
-            )
+            raise TokenHTTPException.decode_error
         except Exception as e:
             logger.error(f"Unknown decode error: {e}")
-            raise HTTPException(
-                status_code=status.HTTP_400_BAD_REQUEST,
-                detail="Unknown decode error",
-                headers={"WWW-Authenticate": "Bearer"},
-            )
+            raise TokenHTTPException.decode_error
 
         user_id: int = int(payload.get("sub"))
         logger.info(f"User ID from token: {user_id}")
@@ -120,15 +81,15 @@ async def verify_token(token: str, credentials_exception, session: AsyncSession)
             logger.info(f"Token from DB: {db_token}")
         except Exception as e:
             logger.error(f"DB request error: {e}")
-            raise error2
+            raise TokenHTTPException.db_error
 
         if db_token is None:
             logger.error("Token not found in DB")
-            raise error3
+            raise TokenHTTPException.token_not_found_error
 
         if db_token.expiry_time < datetime.now():
             logger.error("Token expired")
-            raise error4
+            raise TokenHTTPException.expired_token_error
 
         token_data = TokenData(user_id=user_id, email="")
         logger.info(f"Returning token data: {token_data}")

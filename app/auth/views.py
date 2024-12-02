@@ -10,7 +10,7 @@ from . import service
 from .dependencies import get_current_user
 from .shemas import UserCreate, UserLogin
 
-router = APIRouter()
+router = APIRouter(tags=["auth"])
 
 
 @router.post("/register", status_code=status.HTTP_201_CREATED)
