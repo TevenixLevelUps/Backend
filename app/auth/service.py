@@ -1,9 +1,8 @@
-import smtplib
 import uuid
-from email.mime.text import MIMEText
 
-from fastapi import HTTPException, Response, status
+from fastapi import Response
 from passlib.context import CryptContext
+from pydantic import EmailStr
 from sqlalchemy import Select
 from sqlalchemy.ext.asyncio import AsyncSession
 
@@ -13,7 +12,7 @@ from app.notifications import send_email
 
 from ..exceptions import TokenHTTPException, UserHTTPException
 from . import jwt
-from .shemas import UserCreate, UserLogin
+from .shemas import PasswordReset, UserCreate, UserLogin
 
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
@@ -108,3 +107,46 @@ async def logout_user(session: AsyncSession, response: Response, user: User):
     return {
         "message": "Logged out successfully",
     }
+
+
+async def reset_password_request(
+    email: EmailStr,
+    session: AsyncSession,
+):
+    stmt = Select(User).where(User.email == email)
+    result = await session.execute(stmt)
+    user = result.scalars().first()
+    if not user:
+        raise UserHTTPException.email_not_registered
+
+    reset_code = generate_confirmation_code()
+    user.confirmation_code = reset_code
+    session.add(user)
+    await session.commit()
+
+    title = "Password Reset Request"
+    body = f"Your password reset code is: {reset_code}"
+    send_email(recipients=user.email, body=body, subject=title)
+
+    return {"message": "Password reset code sent to your email"}
+
+
+async def reset_password(data: PasswordReset, session: AsyncSession):
+    stmt = Select(User).where(User.email == data.email)
+    result = await session.execute(stmt)
+    user = result.scalars().first()
+    if not user:
+        raise UserHTTPException.email_not_registered
+
+    if user.confirmation_code != data.reset_code:
+        raise UserHTTPException.invalid_confirmation_code
+
+    user.hashed_password = pwd_context.hash(data.new_password)
+    user.confirmation_code = None
+    session.add(user)
+    await session.commit()
+    title = "Password was reset successfully"
+    body = f"Your password  was reset successfully!,if you did not do this, contact support"
+    send_email(recipients=user.email, body=body, subject=title)
+
+    return {"message": "Password was reset successfully"}

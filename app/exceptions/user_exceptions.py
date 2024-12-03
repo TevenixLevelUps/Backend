@@ -24,3 +24,8 @@ class UserHTTPException:
         status_code=status.HTTP_401_UNAUTHORIZED,
         detail="Not logged in",
     )
+
+    email_not_registered = HTTPException(
+        status_code=status.HTTP_401_UNAUTHORIZED,
+        detail="Email not registered",
+    )
