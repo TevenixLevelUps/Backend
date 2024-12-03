@@ -7,7 +7,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from app.config import settings
 from app.database import session_getter
 from app.services.dao import ServicesDAO
-from app.services.schemas import ServiceTitle, SServiceCreate
+from app.services.schemas import ErrorSchema, ServiceTitle, SServiceCreate
 
 router = APIRouter(
     prefix="/services",
@@ -15,11 +15,17 @@ router = APIRouter(
 )
 
 
-@router.post("/", status_code=status.HTTP_201_CREATED)
+@router.post(
+        "/", 
+        status_code=status.HTTP_201_CREATED,
+        responses={
+            status.HTTP_409_CONFLICT: {'model': ErrorSchema},
+        }, 
+)
 async def post_service(
         service: SServiceCreate,
         session: AsyncSession = Depends(session_getter),
-) -> dict[str, str]:
+) -> SServiceCreate:
     await ServicesDAO.check_service_not_exist(session, service.title)
     await ServicesDAO.add(
         session,
@@ -27,10 +33,16 @@ async def post_service(
         **service.model_dump(),
     )
     await session.commit()
-    return {"message": "service added successfully"}
+    
+    return service
 
-
-@router.get("/{service_title}/", response_model=SServiceCreate)
+@router.get(
+        "/{service_title}/", 
+        response_model=SServiceCreate,
+        responses={
+            status.HTTP_404_NOT_FOUND: {'model': ErrorSchema},
+        },
+)
 @cache(expire=settings.redis.cache_expire_seconds)
 async def get_service(
         service_title: ServiceTitle,
@@ -47,7 +59,13 @@ async def get_services(session: AsyncSession = Depends(session_getter)):
     return services
 
 
-@router.delete("/{service_title}/", status_code=status.HTTP_204_NO_CONTENT)
+@router.delete(
+        "/{service_title}/", 
+        status_code=status.HTTP_204_NO_CONTENT,
+        responses={
+            status.HTTP_404_NOT_FOUND: {'model': ErrorSchema},
+        },
+)
 async def delete_service(
         service_title: ServiceTitle,
         session: AsyncSession = Depends(session_getter),
@@ -56,11 +74,17 @@ async def delete_service(
     await session.commit()
 
 
-@router.put("/")
+@router.put(
+        "/",
+        responses={
+            status.HTTP_404_NOT_FOUND: {'model': ErrorSchema},
+        }, 
+)
 async def put_service(
         new_service: SServiceCreate,
         session: AsyncSession = Depends(session_getter),
-) -> dict[str, str]:
+) -> SServiceCreate:
     await ServicesDAO.update_service(session, new_service)
     await session.commit()
-    return {"message": "service updated successfully"}
+    
+    return new_service
