@@ -16,13 +16,13 @@ router = APIRouter(
 
 
 @router.post(
-        "/", 
-        status_code=status.HTTP_201_CREATED,
-        responses={
-            status.HTTP_404_NOT_FOUND: {'model': ErrorSchema},
-            status.HTTP_409_CONFLICT: {'model': ErrorSchema},
-            status.HTTP_415_UNSUPPORTED_MEDIA_TYPE: {'model': ErrorSchema},
-        },
+    "/", 
+    status_code=status.HTTP_201_CREATED,
+    responses={
+        status.HTTP_404_NOT_FOUND: {'model': ErrorSchema},
+        status.HTTP_409_CONFLICT: {'model': ErrorSchema},
+        status.HTTP_415_UNSUPPORTED_MEDIA_TYPE: {'model': ErrorSchema},
+    },
 )
 async def post_service_image(
         service_title: ServiceTitle,

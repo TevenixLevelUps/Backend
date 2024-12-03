@@ -16,11 +16,11 @@ router = APIRouter(
 
 
 @router.post(
-        "/", 
-        status_code=status.HTTP_201_CREATED,
-        responses={
-            status.HTTP_409_CONFLICT: {'model': ErrorSchema},
-        }, 
+    "/", 
+    status_code=status.HTTP_201_CREATED,
+    responses={
+        status.HTTP_409_CONFLICT: {'model': ErrorSchema},
+    }, 
 )
 async def post_service(
         service: SServiceCreate,
@@ -37,11 +37,11 @@ async def post_service(
     return service
 
 @router.get(
-        "/{service_title}/", 
-        response_model=SServiceCreate,
-        responses={
-            status.HTTP_404_NOT_FOUND: {'model': ErrorSchema},
-        },
+    "/{service_title}/", 
+    response_model=SServiceCreate,
+    responses={
+        status.HTTP_404_NOT_FOUND: {'model': ErrorSchema},
+    },
 )
 @cache(expire=settings.redis.cache_expire_seconds)
 async def get_service(
@@ -60,11 +60,11 @@ async def get_services(session: AsyncSession = Depends(session_getter)):
 
 
 @router.delete(
-        "/{service_title}/", 
-        status_code=status.HTTP_204_NO_CONTENT,
-        responses={
-            status.HTTP_404_NOT_FOUND: {'model': ErrorSchema},
-        },
+    "/{service_title}/", 
+    status_code=status.HTTP_204_NO_CONTENT,
+    responses={
+        status.HTTP_404_NOT_FOUND: {'model': ErrorSchema},
+    },
 )
 async def delete_service(
         service_title: ServiceTitle,
@@ -75,10 +75,10 @@ async def delete_service(
 
 
 @router.put(
-        "/",
-        responses={
-            status.HTTP_404_NOT_FOUND: {'model': ErrorSchema},
-        }, 
+    "/",
+    responses={
+        status.HTTP_404_NOT_FOUND: {'model': ErrorSchema},
+    }, 
 )
 async def put_service(
         new_service: SServiceCreate,
