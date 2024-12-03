@@ -11,3 +11,7 @@ class SSpecialistGet(BaseModel):
 
 class SSpecialistCreate(BaseModel):
     name: str
+
+
+class ErrorSchema(BaseModel):
+    detail: str
