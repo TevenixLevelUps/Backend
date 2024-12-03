@@ -7,6 +7,7 @@ from app.database import session_getter
 from app.services.dao import ServicesDAO
 from app.services.schemas import ServiceTitle
 from app.services.service_images.dao import ServiceImagesDAO
+from app.services.schemas import ErrorSchema
 
 router = APIRouter(
     prefix="/service_images",
@@ -14,18 +15,29 @@ router = APIRouter(
 )
 
 
-@router.post("/", status_code=status.HTTP_201_CREATED)
+@router.post(
+        "/", 
+        status_code=status.HTTP_201_CREATED,
+        responses={
+            status.HTTP_404_NOT_FOUND: {'model': ErrorSchema},
+            status.HTTP_415_UNSUPPORTED_MEDIA_TYPE: {'model': ErrorSchema},
+        },
+)
 async def post_service_image(
         service_title: ServiceTitle,
         image: UploadFile = File(...),
         session: AsyncSession = Depends(session_getter),
-) -> dict[str, str]:
+) -> None:
     await ServiceImagesDAO.create_service_image(session, service_title, image)
     await session.commit()
-    return {"message": "image added successfully"}
 
 
-@router.get("/")
+@router.get(
+        "/",
+        responses={
+            status.HTTP_404_NOT_FOUND: {'model': ErrorSchema},
+        },
+)
 @cache(expire=settings.redis.cache_expire_seconds)
 async def get_image(
         service_title: ServiceTitle,
