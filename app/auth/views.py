@@ -38,6 +38,7 @@ async def login(
     response: Response,
     session: AsyncSession = Depends(db_helper.scoped_session_dependency),
 ):
+    email = email.lower().strip()
     user = UserLogin(email=email, password=password)
     return await service.login_user(user, session, response)
 
@@ -53,9 +54,10 @@ async def logout(
 
 @router.post("/request_to_reset_password", status_code=status.HTTP_200_OK)
 async def request_to_reset_password(
-    email: Annotated[str, Form()],
+    email: Annotated[EmailStr, Form()],
     session: AsyncSession = Depends(db_helper.scoped_session_dependency),
 ):
+    email = email.lower().strip()
     return await service.reset_password_request(email=email, session=session)
 
 
@@ -66,6 +68,7 @@ async def reset_password(
     new_password: Annotated[str, Form()],
     session: AsyncSession = Depends(db_helper.scoped_session_dependency),
 ):
+    email = email.lower().strip()
     data = PasswordReset(email=email, reset_code=reset_code, new_password=new_password)
     return await service.reset_password(data=data, session=session)
 

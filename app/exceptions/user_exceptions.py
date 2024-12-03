@@ -29,3 +29,22 @@ class UserHTTPException:
         status_code=status.HTTP_401_UNAUTHORIZED,
         detail="Email not registered",
     )
+
+    havent_reset_request = HTTPException(
+        status_code=status.HTTP_400_BAD_REQUEST,
+        detail="Have not reset request",
+    )
+
+    code_expired = HTTPException(
+        status_code=status.HTTP_410_GONE,
+        detail="Code expired",
+    )
+    too_many_requests = HTTPException(
+        status_code=status.HTTP_429_TOO_MANY_REQUESTS,
+        detail="Too many requests",
+    )
+
+    active_request = HTTPException(
+        status_code=status.HTTP_400_BAD_REQUEST,
+        detail="You also have active requests with active code",
+    )

@@ -1,3 +1,4 @@
+from datetime import datetime, timedelta
 from typing import TYPE_CHECKING
 
 from sqlalchemy.orm import Mapped, mapped_column, relationship
@@ -17,3 +18,8 @@ class User(Base):
     role: Mapped[str] = mapped_column(default="user")
     tokens: Mapped["Token"] = relationship(back_populates="user")
     reset_requests: Mapped[bool] = mapped_column(default=False)
+    code_expiry_time: Mapped[datetime] = mapped_column(
+        nullable=True, default=datetime.now() + timedelta(minutes=10)
+    )
+    reset_attempts: Mapped[int] = mapped_column(default=0)
+    last_reset_attempts: Mapped[datetime] = mapped_column(default=datetime.now())
