@@ -20,7 +20,7 @@ router = APIRouter(
     status_code=status.HTTP_201_CREATED,
     responses={
         status.HTTP_409_CONFLICT: {'model': ErrorSchema},
-        status.HTTP_429_TOO_MANY_REQUESTS: {'model': ErrorSchema}
+        status.HTTP_429_TOO_MANY_REQUESTS: {'model': ErrorSchema},
     }, 
 )
 async def post_service(
@@ -42,7 +42,7 @@ async def post_service(
     response_model=SServiceCreate,
     responses={
         status.HTTP_404_NOT_FOUND: {'model': ErrorSchema},
-        status.HTTP_429_TOO_MANY_REQUESTS: {'model': ErrorSchema}
+        status.HTTP_429_TOO_MANY_REQUESTS: {'model': ErrorSchema},
     },
 )
 @cache(expire=settings.redis.cache_expire_seconds)
@@ -58,7 +58,7 @@ async def get_service(
     "/", 
     response_model=list[SServiceCreate],
     responses={
-        status.HTTP_429_TOO_MANY_REQUESTS: {'model': ErrorSchema}
+        status.HTTP_429_TOO_MANY_REQUESTS: {'model': ErrorSchema},
     }
 )
 @cache(expire=settings.redis.cache_expire_seconds)
@@ -72,7 +72,7 @@ async def get_services(session: AsyncSession = Depends(session_getter)):
     status_code=status.HTTP_204_NO_CONTENT,
     responses={
         status.HTTP_404_NOT_FOUND: {'model': ErrorSchema},
-        status.HTTP_429_TOO_MANY_REQUESTS: {'model': ErrorSchema}
+        status.HTTP_429_TOO_MANY_REQUESTS: {'model': ErrorSchema},
     },
 )
 async def delete_service(
@@ -87,7 +87,7 @@ async def delete_service(
     "/",
     responses={
         status.HTTP_404_NOT_FOUND: {'model': ErrorSchema},
-        status.HTTP_429_TOO_MANY_REQUESTS: {'model': ErrorSchema}
+        status.HTTP_429_TOO_MANY_REQUESTS: {'model': ErrorSchema},
     }, 
 )
 async def put_service(
