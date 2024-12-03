@@ -7,7 +7,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from app.config import settings
 from app.database import session_getter
 from app.specialists.dao import SpecialistsDAO
-from app.specialists.schemas import SSpecialistCreate, SSpecialistGet
+from app.specialists.schemas import ErrorSchema, SSpecialistCreate, SSpecialistGet
 
 router = APIRouter(
     prefix="/specialists",
@@ -15,7 +15,12 @@ router = APIRouter(
 )
 
 
-@router.get("/{specialist_name}/")
+@router.get(
+    "/{specialist_name}/",
+    responses={
+        status.HTTP_404_NOT_FOUND: {'model': ErrorSchema},
+    },
+)
 @cache(expire=settings.redis.cache_expire_seconds)
 async def get_specialist(
         specialist_name: str,
@@ -33,11 +38,17 @@ async def get_specialists(session: AsyncSession = Depends(session_getter)) -> li
     return specialists
 
 
-@router.post("/", status_code=status.HTTP_201_CREATED)
+@router.post(
+    "/", 
+    status_code=status.HTTP_201_CREATED,
+    responses={
+        status.HTTP_409_CONFLICT: {'model': ErrorSchema},
+    },        
+)
 async def post_specialist(
         specialist: SSpecialistCreate,
         session: AsyncSession = Depends(session_getter),
-) -> dict[str, str]:
+) -> SSpecialistCreate:
     await SpecialistsDAO.check_specialist_not_exist(session, specialist.name)
     await SpecialistsDAO.add(
         session,
@@ -45,10 +56,16 @@ async def post_specialist(
         **specialist.model_dump(),
     )
     await session.commit()
-    return {"message": "specialist added successfully"}
+    return specialist
 
 
-@router.delete("/{specialist_name}/", status_code=status.HTTP_204_NO_CONTENT)
+@router.delete(
+    "/{specialist_name}/", 
+    status_code=status.HTTP_204_NO_CONTENT,
+    responses={
+        status.HTTP_404_NOT_FOUND: {'model': ErrorSchema},
+    },        
+)
 async def delete_specialist(
         specialist_name: str,
         session: AsyncSession = Depends(session_getter),
