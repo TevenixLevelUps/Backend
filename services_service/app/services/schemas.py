@@ -23,3 +23,7 @@ class SServiceGet(BaseModel):
     price: Decimal
     lead_time: time
     image_id: UUID | None
+
+
+class ErrorSchema(BaseModel):
+    detail: str
