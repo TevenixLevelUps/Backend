@@ -33,10 +33,10 @@ async def post_service_image(
 
 
 @router.get(
-        "/",
-        responses={
-            status.HTTP_404_NOT_FOUND: {'model': ErrorSchema},
-        },
+    "/",
+    responses={
+        status.HTTP_404_NOT_FOUND: {'model': ErrorSchema},
+    },
 )
 @cache(expire=settings.redis.cache_expire_seconds)
 async def get_image(
