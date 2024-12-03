@@ -22,4 +22,4 @@ class User(Base):
         nullable=True, default=datetime.now() + timedelta(minutes=10)
     )
     reset_attempts: Mapped[int] = mapped_column(default=0)
-    last_reset_attempts: Mapped[datetime] = mapped_column(default=datetime.now())
+    last_reset_attempts: Mapped[datetime] = mapped_column()

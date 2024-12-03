@@ -34,12 +34,13 @@ async def register_user(user: UserCreate, session: AsyncSession):
     confirmation_code = generate_confirmation_code()
     title: str = "Confirmation code"
     send_email(recipients=user.email, body=str(confirmation_code), subject=title)
-    db_user.code_expiry_time = datetime.utcnow() + timedelta(minutes=10)
+
     db_user = User(
         email=user.email,
         hashed_password=hashed_password,
         confirmation_code=confirmation_code,
     )
+    db_user.code_expiry_time = datetime.now() + timedelta(minutes=10)
 
     session.add(db_user)
     await session.commit()

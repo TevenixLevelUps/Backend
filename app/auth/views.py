@@ -16,9 +16,13 @@ router = APIRouter(tags=["auth"])
 
 @router.post("/register", status_code=status.HTTP_201_CREATED)
 async def register(
-    user: UserCreate,
+    email: Annotated[EmailStr, Form()],
+    password: Annotated[str, Form()],
     session: AsyncSession = Depends(db_helper.scoped_session_dependency),
 ):
+    mail = email.lower().strip()
+    user = UserCreate(email=mail, password=password)
+
     return await service.register_user(user, session)
 
 
