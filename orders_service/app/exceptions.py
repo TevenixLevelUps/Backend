@@ -10,7 +10,7 @@ class OrdersException(HTTPException):
 
 
 class SpecialistBusyException(OrdersException):
-    status_code = status.HTTP_403_FORBIDDEN
+    status_code = status.HTTP_400_BAD_REQUEST
     detail = "Specialist is busy at the time"
 
 
