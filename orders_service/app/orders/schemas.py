@@ -17,3 +17,7 @@ class SOrderCreate(BaseModel):
     service_title: str
     specialist_name: str
     order_time: datetime
+
+
+class ErrorSchema(BaseModel):
+    detail: str
