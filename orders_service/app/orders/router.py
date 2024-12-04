@@ -32,13 +32,13 @@ router = APIRouter(
 async def post_order(
         order: SOrderCreate,
         session: AsyncSession = Depends(session_getter),
-) -> dict[str, str]:
+) -> SOrderCreate:
     try:
         await OrdersDAO.create_order(session, order)
     except DBAPIError:
         raise WrongTimeException
     await session.commit()
-    return {"message": "order added successfully"}
+    return order
 
 
 @router.get(
