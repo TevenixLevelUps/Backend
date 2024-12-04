@@ -10,7 +10,7 @@ from app.database import session_getter
 from app.exceptions import WrongTimeException
 from app.logger import logger
 from app.orders.dao import OrdersDAO
-from app.orders.schemas import SOrderCreate, SOrderGet
+from app.orders.schemas import ErrorSchema, SOrderCreate, SOrderGet
 from app.rabbitmq.services import ServicesRabbit
 from app.rabbitmq.specialists import SpecialistsRabbit
 
@@ -20,7 +20,15 @@ router = APIRouter(
 )
 
 
-@router.post("/", status_code=status.HTTP_201_CREATED)
+@router.post(
+    "/", 
+    status_code=status.HTTP_201_CREATED,
+    responses={
+        status.HTTP_400_BAD_REQUEST: {'model': ErrorSchema},
+        status.HTTP_404_NOT_FOUND: {'model': ErrorSchema},
+        status.HTTP_429_TOO_MANY_REQUESTS: {'model': ErrorSchema},
+    },         
+)
 async def post_order(
         order: SOrderCreate,
         session: AsyncSession = Depends(session_getter),
@@ -33,7 +41,12 @@ async def post_order(
     return {"message": "order added successfully"}
 
 
-@router.get("/")
+@router.get(
+    "/",
+    responses={
+        status.HTTP_429_TOO_MANY_REQUESTS: {'model': ErrorSchema},
+    },        
+)
 @cache(expire=settings.redis.cache_expire_seconds)
 async def get_orders(session: AsyncSession = Depends(session_getter)) -> list[SOrderCreate]:
     orders: list[SOrderGet] = await OrdersDAO.find_all(session)
@@ -53,7 +66,15 @@ async def get_orders(session: AsyncSession = Depends(session_getter)) -> list[SO
     return result_orders
 
 
-@router.delete("/", status_code=status.HTTP_204_NO_CONTENT)
+@router.delete(
+    "/", 
+    status_code=status.HTTP_204_NO_CONTENT,
+    responses={
+        status.HTTP_400_BAD_REQUEST: {'model': ErrorSchema},
+        status.HTTP_404_NOT_FOUND: {'model': ErrorSchema},
+        status.HTTP_429_TOO_MANY_REQUESTS: {'model': ErrorSchema},
+    },
+)
 async def delete_order(
         order_to_delete: SOrderCreate,
         session: AsyncSession = Depends(session_getter),
