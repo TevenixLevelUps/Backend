@@ -1,7 +1,7 @@
 import json
 from functools import wraps
 
-from app.database.redis_config import redis_client
+from app.database.redis_config import redis_client, redis_port
 
 
 def cache_red(model_class, expiry: int = 660):

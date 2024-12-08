@@ -14,4 +14,4 @@ except ValueError:
     raise ValueError(f"Invalid REDIS_PORT value: {REDIS_PORT}")
 
 
-redis_client = redis_async.Redis(host="localhost", port=redis_port, db=0)
+redis_client = redis_async.Redis(host=DB_HOST, port=redis_port, db=0)
