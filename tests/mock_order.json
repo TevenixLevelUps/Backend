@@ -1,0 +1,35 @@
+[
+    {
+        "name": "Create Order",
+        "method": "POST",
+        "url": "/orders",
+        "request_body": {
+          "id": 1,
+          "client_name": "Петр",
+          "service_id": 1,
+          "specialist_id": 1,
+          "time": "2023-10-01T10:00:00"
+        },
+        "expected_status": 200,
+        "expected_response": {
+          "id": 1,
+          "client_name": "Петр",
+          "service_id": 1,
+          "specialist_id": 1,
+          "time": "2023-10-01T10:00:00"
+        }
+      },
+      {
+        "name": "Get Order",
+        "method": "GET",
+        "url": "/orders/1",
+        "expected_status": 200,
+        "expected_response": {
+          "id": 1,
+          "client_name": "Петр",
+          "service_id": 1,
+          "specialist_id": 1,
+          "time": "2023-10-01T10:00:00"
+        }
+      }
+]

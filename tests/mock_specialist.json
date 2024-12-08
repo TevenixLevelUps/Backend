@@ -1,0 +1,29 @@
+[
+    {
+        "name": "Create Specialist",
+        "method": "POST",
+        "url": "/specialists",
+        "request_body": {
+          "id": 1,
+          "name": "Иван",
+          "avatar": "url_to_avatar"
+        },
+        "expected_status": 200,
+        "expected_response": {
+          "id": 1,
+          "name": "Иван",
+          "avatar": "url_to_avatar"
+        }
+      },
+      {
+        "name": "Get Specialist",
+        "method": "GET",
+        "url": "/specialists/1",
+        "expected_status": 200,
+        "expected_response": {
+          "id": 1,
+          "name": "Иван",
+          "avatar": "url_to_avatar"
+        }
+      }
+]
